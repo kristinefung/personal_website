@@ -13,3 +13,53 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Enquiry {
+  id      Int     @id @default(autoincrement())
+  name    String
+  email   String?
+  phone   String?
+  subject String
+  message String
+
+  createdAt DateTime  @default(now())
+  createdBy Int?
+  updatedAt DateTime? @updatedAt
+  updatedBy Int?
+  deletedAt DateTime?
+  deletedBy Int?
+  deleted   Boolean   @default(false)
+
+  // relation
+  createdByUser User? @relation("EnquiryCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser User? @relation("EnquiryUpdatedBy", fields: [updatedBy], references: [id])
+  deletedByUser User? @relation("EnquiryDeletedBy", fields: [deletedBy], references: [id])
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String
+  password String
+
+  createdAt DateTime  @default(now())
+  createdBy Int?
+  updatedAt DateTime? @updatedAt
+  updatedBy Int?
+  deletedAt DateTime?
+  deletedBy Int?
+  deleted   Boolean   @default(false)
+
+  // relation
+  createdByUser User? @relation("UserCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser User? @relation("UserUpdatedBy", fields: [updatedBy], references: [id])
+  deletedByUser User? @relation("UserDeletedBy", fields: [deletedBy], references: [id])
+
+  usersCreated User[] @relation("UserCreatedBy")
+  usersUpdated User[] @relation("UserUpdatedBy")
+  usersDeleted User[] @relation("UserDeletedBy")
+
+  enquiriesCreated Enquiry[] @relation("EnquiryCreatedBy")
+  enquiriesUpdated Enquiry[] @relation("EnquiryUpdatedBy")
+  enquiriesDeleted Enquiry[] @relation("EnquiryDeletedBy")
+}
