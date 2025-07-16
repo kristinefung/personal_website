@@ -1,6 +1,6 @@
 export default function Greeting() {
     return (
-        <section id="section-greeting" className="flex flex-col items-start justify-center min-h-[70vh]">
+        <section id="section-greeting" className="flex flex-col items-start justify-center min-h-[100vh]">
             <p className="text-[#7fffd4] text-lg font-mono mb-2">
                 Hi, my name is
             </p>
