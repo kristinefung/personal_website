@@ -12,9 +12,25 @@ const navLinks = [
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
 
+    const handleLogoClick = () => {
+        const el = document.getElementById('section-greeting');
+        const header = document.querySelector('header');
+        if (el) {
+            const y = el.getBoundingClientRect().top + window.scrollY;
+            const headerHeight = header ? header.getBoundingClientRect().height : 0;
+            window.scrollTo({
+                top: y - headerHeight,
+                behavior: 'smooth',
+            });
+        }
+    };
+
     return (
         <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-6 bg-[#0a1628] z-30 shadow">
-            <div className="text-xl font-bold text-[#7fffd4] font-mono">&lt;KristineFung/&gt;</div>
+            <div
+                className="text-xl font-bold text-[#7fffd4] font-mono cursor-pointer"
+                onClick={handleLogoClick}
+            >&lt;KristineFung/&gt;</div>
             {/* Desktop Nav */}
             <nav className="hidden md:flex gap-10">
                 {navLinks.map((link) => (
