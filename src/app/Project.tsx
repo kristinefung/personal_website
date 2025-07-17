@@ -45,7 +45,7 @@ export default function Project() {
 
     if (loading) {
         return (
-            <section className="py-24 px-16 bg-[#112240] w-full">
+            <section id="projects" className="py-24 px-16 bg-[#112240] w-full">
                 <h2 className="text-4xl font-bold text-white mb-2">My Projects</h2>
                 <div className="h-1 w-32 bg-teal-300 mb-10" />
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -75,7 +75,7 @@ export default function Project() {
 
     if (error) {
         return (
-            <section className="py-24 px-16 bg-[#112240] w-full">
+            <section id="projects" className="py-24 px-16 bg-[#112240] w-full">
                 <h2 className="text-4xl font-bold text-white mb-2">My Projects</h2>
                 <div className="h-1 w-32 bg-teal-300 mb-10" />
                 <p className="text-red-400 text-lg">
@@ -87,7 +87,7 @@ export default function Project() {
 
     if (projects.length === 0) {
         return (
-            <section className="py-24 px-16 bg-[#112240] w-full">
+            <section id="projects" className="py-24 px-16 bg-[#112240] w-full">
                 <h2 className="text-4xl font-bold text-white mb-2">My Projects</h2>
                 <div className="h-1 w-32 bg-teal-300 mb-10" />
                 <p className="text-gray-400 text-lg">
@@ -98,7 +98,7 @@ export default function Project() {
     }
 
     return (
-        <section className="py-24 px-16 bg-[#112240] w-full">
+        <section id="projects" className="py-24 px-16 bg-[#112240] w-full">
             <h2 className="text-4xl font-bold text-white mb-2">My Projects</h2>
             <div className="h-1 w-32 bg-teal-300 mb-10" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

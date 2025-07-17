@@ -115,7 +115,7 @@ export default function Contact() {
     };
 
     return (
-        <section className="py-24 px-8 md:px-16 bg-[#112240] w-full flex flex-col items-center">
+        <section id="contact" className="py-24 px-8 md:px-16 bg-[#112240] w-full flex flex-col items-center">
             <h2 className="text-4xl font-bold text-white mb-2">Get In Touch</h2>
             <p className="text-gray-400 mb-8 text-center max-w-2xl">
                 Whether you have a question or just want to say hi, I'll do my best to get back to you!

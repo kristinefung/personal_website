@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const navLinks = [
     { name: "About", href: "#about" },
@@ -11,6 +11,60 @@ const navLinks = [
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState<string>('');
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const header = document.querySelector('header');
+            const headerHeight = header ? header.getBoundingClientRect().height : 0;
+            const scrollOffset = headerHeight + 50; // Additional offset for better UX
+
+            // Check greeting section first
+            const greetingEl = document.getElementById('section-greeting');
+            if (greetingEl) {
+                const rect = greetingEl.getBoundingClientRect();
+                if (rect.top <= scrollOffset && rect.bottom > scrollOffset) {
+                    setActiveSection('');
+                    return;
+                }
+            }
+
+            // Check other sections
+            const sections = ['about', 'projects', 'journey', 'contact'];
+
+            for (const sectionId of sections) {
+                const element = document.getElementById(sectionId);
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    // Check if section is in view (top is above threshold and bottom is below)
+                    if (rect.top <= scrollOffset && rect.bottom > scrollOffset) {
+                        setActiveSection(sectionId);
+                        return;
+                    }
+                }
+            }
+
+            // If we're at the very bottom, highlight the last section
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                const lastSection = sections[sections.length - 1];
+                const lastElement = document.getElementById(lastSection);
+                if (lastElement) {
+                    setActiveSection(lastSection);
+                }
+            }
+        };
+
+        // Set initial active section
+        handleScroll();
+
+        // Add scroll listener
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        // Cleanup
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
     const handleLogoClick = () => {
         const el = document.getElementById('section-greeting');
@@ -25,6 +79,30 @@ export default function Header() {
         }
     };
 
+    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        e.preventDefault();
+        const targetId = href.substring(1); // Remove the # from href
+        const el = document.getElementById(targetId);
+        const header = document.querySelector('header');
+
+        if (el) {
+            const y = el.getBoundingClientRect().top + window.scrollY;
+            const headerHeight = header ? header.getBoundingClientRect().height : 0;
+            window.scrollTo({
+                top: y - headerHeight,
+                behavior: 'smooth',
+            });
+        }
+
+        // Close mobile menu if open
+        setMenuOpen(false);
+    };
+
+    const isActive = (href: string) => {
+        const sectionId = href.substring(1);
+        return activeSection === sectionId;
+    };
+
     return (
         <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-6 bg-[#0a1628] z-30 shadow">
             <div
@@ -37,7 +115,11 @@ export default function Header() {
                     <a
                         key={link.name}
                         href={link.href}
-                        className="text-gray-400 hover:text-white transition-colors text-lg font-medium"
+                        onClick={(e) => handleNavClick(e, link.href)}
+                        className={`transition-colors text-lg font-medium cursor-pointer ${isActive(link.href)
+                            ? 'text-[#7fffd4]'
+                            : 'text-gray-400 hover:text-[#7fffd4]'
+                            }`}
                     >
                         {link.name}
                     </a>
@@ -62,8 +144,11 @@ export default function Header() {
                     <a
                         key={link.name}
                         href={link.href}
-                        className="text-gray-400 hover:text-white transition-colors text-lg font-medium"
-                        onClick={() => setMenuOpen(false)}
+                        onClick={(e) => handleNavClick(e, link.href)}
+                        className={`transition-colors text-lg font-medium cursor-pointer ${isActive(link.href)
+                            ? 'text-[#7fffd4]'
+                            : 'text-gray-400 hover:text-[#7fffd4]'
+                            }`}
                     >
                         {link.name}
                     </a>

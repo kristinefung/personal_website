@@ -36,7 +36,7 @@ export default function Journey() {
 
     if (loading) {
         return (
-            <section className="py-24 px-8 md:px-16 bg-[#0a1628] w-full">
+            <section id="journey" className="py-24 px-8 md:px-16 bg-[#0a1628] w-full">
                 <h2 className="text-4xl font-bold text-white mb-2">My Journey</h2>
                 <div className="h-1 w-32 bg-[#7fffd4] mb-10" />
                 <div className="relative ml-4">
@@ -61,7 +61,7 @@ export default function Journey() {
 
     if (error) {
         return (
-            <section className="py-24 px-8 md:px-16 bg-[#0a1628] w-full">
+            <section id="journey" className="py-24 px-8 md:px-16 bg-[#0a1628] w-full">
                 <h2 className="text-4xl font-bold text-white mb-2">My Journey</h2>
                 <div className="h-1 w-32 bg-[#7fffd4] mb-10" />
                 <p className="text-red-400 text-lg">
@@ -73,7 +73,7 @@ export default function Journey() {
 
     if (journeys.length === 0) {
         return (
-            <section className="py-24 px-8 md:px-16 bg-[#0a1628] w-full">
+            <section id="journey" className="py-24 px-8 md:px-16 bg-[#0a1628] w-full">
                 <h2 className="text-4xl font-bold text-white mb-2">My Journey</h2>
                 <div className="h-1 w-32 bg-[#7fffd4] mb-10" />
                 <p className="text-gray-400 text-lg">
@@ -84,7 +84,7 @@ export default function Journey() {
     }
 
     return (
-        <section className="py-24 px-8 md:px-16 bg-[#0a1628] w-full">
+        <section id="journey" className="py-24 px-8 md:px-16 bg-[#0a1628] w-full">
             <h2 className="text-4xl font-bold text-white mb-2">My Journey</h2>
             <div className="h-1 w-32 bg-[#7fffd4] mb-10" />
             <div className="relative ml-4">
