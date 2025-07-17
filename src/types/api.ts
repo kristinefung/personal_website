@@ -53,6 +53,26 @@ export interface UpdateProjectRequest {
     updatedBy?: number;
 }
 
+export interface CreateJourneyRequest {
+    title: string;
+    institution: string;
+    description: string;
+    startYear: number;
+    endYear?: number;
+    isCurrent?: boolean;
+    createdBy?: number;
+}
+
+export interface UpdateJourneyRequest {
+    title?: string;
+    institution?: string;
+    description?: string;
+    startYear?: number;
+    endYear?: number;
+    isCurrent?: boolean;
+    updatedBy?: number;
+}
+
 // Response types
 export interface EnquiryResponse {
     id: number;
@@ -134,6 +154,29 @@ export interface ProjectResponse {
     }[];
 }
 
+export interface JourneyResponse {
+    id: number;
+    title: string;
+    institution: string;
+    description: string;
+    startYear: number;
+    endYear: number | null;
+    isCurrent: boolean;
+    createdAt: Date;
+    updatedAt: Date | null;
+    deleted: boolean;
+    createdByUser?: {
+        id: number;
+        name: string;
+        email: string;
+    } | null;
+    updatedByUser?: {
+        id: number;
+        name: string;
+        email: string;
+    } | null;
+}
+
 export interface CreateEnquiryResponse {
     message: string;
     id: number;
@@ -149,11 +192,24 @@ export interface CreateProjectResponse {
     project: ProjectResponse;
 }
 
+export interface CreateJourneyResponse {
+    message: string;
+    journey: JourneyResponse;
+}
+
 // Filter types
 export interface ProjectFilters {
     includeDeleted?: boolean;
     createdBy?: number;
     name?: string;
+}
+
+export interface JourneyFilters {
+    includeDeleted?: boolean;
+    createdBy?: number;
+    isCurrent?: boolean;
+    startYear?: number;
+    endYear?: number;
 }
 
 // API Error response
