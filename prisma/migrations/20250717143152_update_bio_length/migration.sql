@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Profile` MODIFY `bio` VARCHAR(1000) NOT NULL;

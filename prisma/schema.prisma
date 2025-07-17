@@ -36,6 +36,48 @@ model Enquiry {
   deletedByUser User? @relation("EnquiryDeletedBy", fields: [deletedBy], references: [id])
 }
 
+model Profile {
+  id Int @id @default(autoincrement())
+
+  bio              String  @db.VarChar(1000)
+  profileImagePath String?
+  email            String?
+  githubUrl        String?
+  linkedinUrl      String?
+
+  createdAt DateTime  @default(now())
+  createdBy Int?
+  updatedAt DateTime? @updatedAt
+  updatedBy Int?
+  deletedAt DateTime?
+  deletedBy Int?
+  deleted   Boolean   @default(false)
+
+  // relation
+  createdByUser            User?                      @relation("ProfileCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser            User?                      @relation("ProfileUpdatedBy", fields: [updatedBy], references: [id])
+  deletedByUser            User?                      @relation("ProfileDeletedBy", fields: [deletedBy], references: [id])
+  MappingProfileTechnology MappingProfileTechnology[]
+}
+
+model MappingProfileTechnology {
+  id Int @id @default(autoincrement())
+
+  profileId    Int
+  technologyId Int
+
+  // relation
+  profile    Profile    @relation(fields: [profileId], references: [id])
+  technology Technology @relation(fields: [technologyId], references: [id])
+}
+
+model Technology {
+  id                       Int                        @id @default(autoincrement())
+  name                     String
+  color                    String
+  MappingProfileTechnology MappingProfileTechnology[]
+}
+
 model User {
   id       Int    @id @default(autoincrement())
   name     String
@@ -62,4 +104,8 @@ model User {
   enquiriesCreated Enquiry[] @relation("EnquiryCreatedBy")
   enquiriesUpdated Enquiry[] @relation("EnquiryUpdatedBy")
   enquiriesDeleted Enquiry[] @relation("EnquiryDeletedBy")
+
+  profilesCreated Profile[] @relation("ProfileCreatedBy")
+  profilesUpdated Profile[] @relation("ProfileUpdatedBy")
+  profilesDeleted Profile[] @relation("ProfileDeletedBy")
 }
