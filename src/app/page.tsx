@@ -6,7 +6,7 @@ import About from "./About";
 import Project from "./Project";
 import Journey from "./Journey";
 import Contact from "./Contact";
-
+import Footer from "../component/Footer";
 export default function Home() {
   return (
     <>
@@ -18,6 +18,7 @@ export default function Home() {
         <Journey />
         <Contact />
       </main>
+      <Footer />
     </>
   );
 }
