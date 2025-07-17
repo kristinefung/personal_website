@@ -8,7 +8,7 @@ const technologies = [
 
 export default function About() {
     return (
-        <section id="about" className="w-full flex flex-col md:flex-row items-center md:items-start justify-between py-12">
+        <section id="about" className="px-16 w-full flex flex-col md:flex-row items-center md:items-start justify-between py-12">
             <div className="flex-1 md:mr-12">
                 <h2 className="text-4xl font-bold text-gray-100 mb-2">About Me</h2>
                 <div className="w-24 h-1 bg-[#7fffd4] mb-8" />
