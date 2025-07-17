@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 import { enquiryApi } from "@/lib/api/enquiryApi";
-import { CreateEnquiryRequest } from "@/types/api";
+import { profileApi } from "@/lib/api/profileApi";
+import { CreateEnquiryRequest, ProfileResponse } from "@/types/api";
 
 interface FormData {
     name: string;
@@ -32,6 +33,26 @@ export default function Contact() {
         message: '',
         isError: false
     });
+
+    const [profile, setProfile] = useState<ProfileResponse | null>(null);
+    const [profileLoading, setProfileLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                setProfileLoading(true);
+                const profileData = await profileApi.getMainProfile();
+                setProfile(profileData);
+            } catch (err) {
+                console.error('Error fetching profile:', err);
+                // Fail silently for social links, form should still work
+            } finally {
+                setProfileLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -188,9 +209,48 @@ export default function Contact() {
             <div className="mt-10 flex flex-col items-center">
                 <p className="text-gray-400 mb-4 text-lg">Or reach out directly:</p>
                 <div className="flex gap-8">
-                    <a href="#" aria-label="Email" className="text-gray-400 hover:text-[#7fffd4] text-3xl transition-colors"><FaEnvelope /></a>
-                    <a href="#" aria-label="GitHub" className="text-gray-400 hover:text-[#7fffd4] text-3xl transition-colors"><FaGithub /></a>
-                    <a href="#" aria-label="LinkedIn" className="text-gray-400 hover:text-[#7fffd4] text-3xl transition-colors"><FaLinkedin /></a>
+                    {profileLoading ? (
+                        // Loading state for social links
+                        <>
+                            <div className="w-8 h-8 bg-gray-700 rounded animate-pulse"></div>
+                            <div className="w-8 h-8 bg-gray-700 rounded animate-pulse"></div>
+                            <div className="w-8 h-8 bg-gray-700 rounded animate-pulse"></div>
+                        </>
+                    ) : (
+                        <>
+                            {profile?.email && (
+                                <a
+                                    href={`mailto:${profile.email}`}
+                                    aria-label="Email"
+                                    className="text-gray-400 hover:text-[#7fffd4] text-3xl transition-colors"
+                                >
+                                    <FaEnvelope />
+                                </a>
+                            )}
+                            {profile?.githubUrl && (
+                                <a
+                                    href={profile.githubUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="GitHub"
+                                    className="text-gray-400 hover:text-[#7fffd4] text-3xl transition-colors"
+                                >
+                                    <FaGithub />
+                                </a>
+                            )}
+                            {profile?.linkedinUrl && (
+                                <a
+                                    href={profile.linkedinUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="LinkedIn"
+                                    className="text-gray-400 hover:text-[#7fffd4] text-3xl transition-colors"
+                                >
+                                    <FaLinkedin />
+                                </a>
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
         </section>
