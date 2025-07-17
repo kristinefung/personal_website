@@ -4,6 +4,7 @@ import Header from "../component/Header";
 import Greeting from "./Greeting";
 import About from "./About";
 import Project from "./Project";
+import Journey from "./Journey";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
         <Greeting />
         <About />
         <Project />
+        <Journey />
       </main>
     </>
   );
