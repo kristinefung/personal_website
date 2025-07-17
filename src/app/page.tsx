@@ -5,6 +5,7 @@ import Greeting from "./Greeting";
 import About from "./About";
 import Project from "./Project";
 import Journey from "./Journey";
+import Contact from "./Contact";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
         <About />
         <Project />
         <Journey />
+        <Contact />
       </main>
     </>
   );
