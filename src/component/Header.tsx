@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 
 const navLinks = [
+    { name: "Home", href: "#section-greeting" },
     { name: "About", href: "#about" },
     { name: "Projects", href: "#projects" },
     { name: "Journey", href: "#journey" },
@@ -30,7 +31,7 @@ export default function Header() {
             }
 
             // Check other sections
-            const sections = ['about', 'projects', 'journey', 'contact'];
+            const sections = ['section-greeting', 'about', 'projects', 'journey', 'contact'];
 
             for (const sectionId of sections) {
                 const element = document.getElementById(sectionId);
