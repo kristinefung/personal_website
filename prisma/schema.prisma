@@ -85,6 +85,30 @@ model Project {
   MappingProjectTechnology MappingProjectTechnology[]
 }
 
+model Journey {
+  id Int @id @default(autoincrement())
+
+  title       String
+  institution String
+  description String  @db.VarChar(1000)
+  startYear   Int
+  endYear     Int?
+  isCurrent   Boolean @default(false)
+
+  createdAt DateTime  @default(now())
+  createdBy Int?
+  updatedAt DateTime? @updatedAt
+  updatedBy Int?
+  deletedAt DateTime?
+  deletedBy Int?
+  deleted   Boolean   @default(false)
+
+  // relation
+  createdByUser User? @relation("JourneyCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser User? @relation("JourneyUpdatedBy", fields: [updatedBy], references: [id])
+  deletedByUser User? @relation("JourneyDeletedBy", fields: [deletedBy], references: [id])
+}
+
 model MappingProfileTechnology {
   id Int @id @default(autoincrement())
 
@@ -149,4 +173,8 @@ model User {
   projectsCreated Project[] @relation("ProjectCreatedBy")
   projectsUpdated Project[] @relation("ProjectUpdatedBy")
   projectsDeleted Project[] @relation("ProjectDeletedBy")
+
+  journeysCreated Journey[] @relation("JourneyCreatedBy")
+  journeysUpdated Journey[] @relation("JourneyUpdatedBy")
+  journeysDeleted Journey[] @relation("JourneyDeletedBy")
 }
