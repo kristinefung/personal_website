@@ -34,6 +34,25 @@ export interface UpdateProfileRequest {
     updatedBy?: number;
 }
 
+export interface CreateProjectRequest {
+    name: string;
+    description?: string;
+    imagePath?: string;
+    githubUrl?: string;
+    projectUrl?: string;
+    createdBy?: number;
+}
+
+export interface UpdateProjectRequest {
+    name?: string;
+    description?: string;
+    imagePath?: string;
+    githubUrl?: string;
+    projectUrl?: string;
+    technologyIds?: number[];
+    updatedBy?: number;
+}
+
 // Response types
 export interface EnquiryResponse {
     id: number;
@@ -89,6 +108,32 @@ export interface ProfileResponse {
     }[];
 }
 
+export interface ProjectResponse {
+    id: number;
+    name: string;
+    description: string | null;
+    imagePath: string | null;
+    githubUrl: string | null;
+    projectUrl: string | null;
+    createdAt: Date;
+    updatedAt: Date | null;
+    deleted: boolean;
+    createdByUser?: {
+        id: number;
+        name: string;
+        email: string;
+    } | null;
+    updatedByUser?: {
+        id: number;
+        name: string;
+        email: string;
+    } | null;
+    MappingProjectTechnology: {
+        id: number;
+        technology: TechnologyResponse;
+    }[];
+}
+
 export interface CreateEnquiryResponse {
     message: string;
     id: number;
@@ -97,6 +142,18 @@ export interface CreateEnquiryResponse {
 export interface CreateProfileResponse {
     message: string;
     profile: ProfileResponse;
+}
+
+export interface CreateProjectResponse {
+    message: string;
+    project: ProjectResponse;
+}
+
+// Filter types
+export interface ProjectFilters {
+    includeDeleted?: boolean;
+    createdBy?: number;
+    name?: string;
 }
 
 // API Error response
