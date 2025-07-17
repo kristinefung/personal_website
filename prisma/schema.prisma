@@ -60,6 +60,31 @@ model Profile {
   MappingProfileTechnology MappingProfileTechnology[]
 }
 
+model Project {
+  id Int @id @default(autoincrement())
+
+  name        String
+  description String?
+  imagePath   String?
+  githubUrl   String?
+  projectUrl  String?
+
+  createdAt DateTime  @default(now())
+  createdBy Int?
+  updatedAt DateTime? @updatedAt
+  updatedBy Int?
+  deletedAt DateTime?
+  deletedBy Int?
+  deleted   Boolean   @default(false)
+
+  // relation
+  createdByUser User? @relation("ProjectCreatedBy", fields: [createdBy], references: [id])
+  updatedByUser User? @relation("ProjectUpdatedBy", fields: [updatedBy], references: [id])
+  deletedByUser User? @relation("ProjectDeletedBy", fields: [deletedBy], references: [id])
+
+  MappingProjectTechnology MappingProjectTechnology[]
+}
+
 model MappingProfileTechnology {
   id Int @id @default(autoincrement())
 
@@ -71,11 +96,23 @@ model MappingProfileTechnology {
   technology Technology @relation(fields: [technologyId], references: [id])
 }
 
+model MappingProjectTechnology {
+  id Int @id @default(autoincrement())
+
+  projectId    Int
+  technologyId Int
+
+  // relation
+  project    Project    @relation(fields: [projectId], references: [id])
+  technology Technology @relation(fields: [technologyId], references: [id])
+}
+
 model Technology {
   id                       Int                        @id @default(autoincrement())
   name                     String
   color                    String
   MappingProfileTechnology MappingProfileTechnology[]
+  MappingProjectTechnology MappingProjectTechnology[]
 }
 
 model User {
@@ -108,4 +145,8 @@ model User {
   profilesCreated Profile[] @relation("ProfileCreatedBy")
   profilesUpdated Profile[] @relation("ProfileUpdatedBy")
   profilesDeleted Profile[] @relation("ProfileDeletedBy")
+
+  projectsCreated Project[] @relation("ProjectCreatedBy")
+  projectsUpdated Project[] @relation("ProjectUpdatedBy")
+  projectsDeleted Project[] @relation("ProjectDeletedBy")
 }
