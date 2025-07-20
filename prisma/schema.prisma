@@ -139,11 +139,23 @@ model Technology {
   MappingProjectTechnology MappingProjectTechnology[]
 }
 
+model UserSession {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  userSessionToken String
+  loggedInAt       DateTime @default(now())
+  expiresAt        DateTime
+
+  // relation
+  user User @relation(fields: [userId], references: [id])
+}
+
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String
-  password String
+  id             Int    @id @default(autoincrement())
+  name           String
+  email          String
+  hashedPassword String
+  passwordSalt   String
 
   createdAt DateTime  @default(now())
   createdBy Int?
@@ -177,4 +189,6 @@ model User {
   journeysCreated Journey[] @relation("JourneyCreatedBy")
   journeysUpdated Journey[] @relation("JourneyUpdatedBy")
   journeysDeleted Journey[] @relation("JourneyDeletedBy")
+
+  userSessions UserSession[]
 }
