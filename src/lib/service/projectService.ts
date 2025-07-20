@@ -109,6 +109,27 @@ class ProjectApiService {
 
         return result.project;
     }
+
+    async deleteProject(id: number): Promise<void> {
+        const sessionToken = authApiService.getCurrentSessionToken();
+
+        if (!sessionToken) {
+            throw new Error('No authentication token available');
+        }
+
+        const response = await fetch(`${this.baseUrl}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${sessionToken}`,
+            },
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to delete project');
+        }
+    }
 }
 
 export const projectApi = new ProjectApiService(); 
