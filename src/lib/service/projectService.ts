@@ -1,4 +1,12 @@
 import { ProjectResponse, ProjectFilters } from '@/types/api';
+import { authApiService } from '@/lib/service/authApiService';
+
+interface UpdateProjectRequest {
+    name?: string;
+    description?: string;
+    githubUrl?: string;
+    projectUrl?: string;
+}
 
 class ProjectApiService {
     private baseUrl = '/api/projects';
@@ -41,6 +49,31 @@ class ProjectApiService {
         }
 
         return result;
+    }
+
+    async updateProject(id: number, data: UpdateProjectRequest): Promise<ProjectResponse> {
+        const sessionToken = authApiService.getCurrentSessionToken();
+
+        if (!sessionToken) {
+            throw new Error('No authentication token available');
+        }
+
+        const response = await fetch(`${this.baseUrl}/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to update project');
+        }
+
+        return result.project;
     }
 }
 

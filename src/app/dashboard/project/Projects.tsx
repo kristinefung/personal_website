@@ -48,9 +48,34 @@ export default function Projects() {
         console.log("Delete Project clicked for ID:", projectId);
     };
 
-    const handleSaveProject = (projectData: any) => {
-        // TODO: Implement save project functionality
-        console.log("Save project:", projectData);
+    const handleSaveProject = async (projectData: any) => {
+        if (!selectedProject) return;
+
+        try {
+            // Prepare the update data
+            const updateData = {
+                name: projectData.name,
+                description: projectData.description,
+                githubUrl: projectData.githubUrl,
+                projectUrl: projectData.projectUrl,
+            };
+
+            // Call the API to update the project
+            const updatedProject = await projectApi.updateProject(selectedProject.id, updateData);
+
+            // Update the projects list with the updated project
+            setProjects(prevProjects =>
+                prevProjects.map(project =>
+                    project.id === selectedProject.id ? updatedProject : project
+                )
+            );
+
+            console.log("Project updated successfully:", updatedProject);
+        } catch (error) {
+            console.error("Error updating project:", error);
+            // TODO: Show error message to user
+            alert(error instanceof Error ? error.message : 'Failed to update project');
+        }
     };
 
     const handleCloseModal = () => {
