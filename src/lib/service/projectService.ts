@@ -6,6 +6,15 @@ interface UpdateProjectRequest {
     description?: string;
     githubUrl?: string;
     projectUrl?: string;
+    technologies?: string;
+}
+
+interface CreateProjectRequest {
+    name: string;
+    description?: string;
+    githubUrl?: string;
+    projectUrl?: string;
+    technologies?: string;
 }
 
 class ProjectApiService {
@@ -49,6 +58,31 @@ class ProjectApiService {
         }
 
         return result;
+    }
+
+    async createProject(data: CreateProjectRequest): Promise<ProjectResponse> {
+        const sessionToken = authApiService.getCurrentSessionToken();
+
+        if (!sessionToken) {
+            throw new Error('No authentication token available');
+        }
+
+        const response = await fetch(this.baseUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionToken}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to create project');
+        }
+
+        return result.project;
     }
 
     async updateProject(id: number, data: UpdateProjectRequest): Promise<ProjectResponse> {
