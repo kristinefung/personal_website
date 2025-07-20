@@ -5,11 +5,14 @@ import { existsSync } from 'fs';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { path: string[] } }
+    { params }: { params: Promise<{ path: string[] }> }
 ) {
     try {
+        // Await params for Next.js 15 compatibility
+        const { path } = await params;
+
         // Join the path segments
-        const imagePath = params.path.join('/');
+        const imagePath = path.join('/');
 
         // Define the directory where images are stored (outside public folder)
         // You can change this to your preferred directory

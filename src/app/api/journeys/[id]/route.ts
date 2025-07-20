@@ -5,10 +5,11 @@ const journeyRepository = new JourneyRepository();
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const journeyId = parseInt(params.id);
+        const { id } = await params;
+        const journeyId = parseInt(id);
 
         if (isNaN(journeyId)) {
             return NextResponse.json(

@@ -5,10 +5,11 @@ const projectRepository = new ProjectRepository();
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const projectId = parseInt(params.id);
+        const { id } = await params;
+        const projectId = parseInt(id);
 
         if (isNaN(projectId)) {
             return NextResponse.json(
