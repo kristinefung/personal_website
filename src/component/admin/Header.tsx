@@ -13,19 +13,20 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({
     title = "Dashboard",
     userName = "John Doe",
+    userRole = "Administrator",
     userInitials = "JD",
     sidebarOpen = false,
     onToggleSidebar
 }) => {
     return (
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+        <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white shadow-sm border-b border-gray-200 px-6 py-4 z-30">
             <div className="flex items-center justify-between">
                 {/* Left side - Toggle and Title */}
                 <div className="flex items-center space-x-4">
                     {/* Mobile toggle button */}
                     <button
                         onClick={onToggleSidebar}
-                        className="lg:hidden text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                        className="lg:hidden text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                         aria-label="Toggle sidebar"
                     >
                         {sidebarOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
@@ -37,6 +38,7 @@ const Header: React.FC<HeaderProps> = ({
                 <div className="flex items-center space-x-3">
                     <div className="text-right">
                         <div className="text-sm font-medium text-gray-900">{userName}</div>
+                        <div className="text-xs text-gray-500">{userRole}</div>
                     </div>
                     <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-medium">{userInitials}</span>

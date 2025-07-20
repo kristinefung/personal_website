@@ -4,8 +4,8 @@ import React from "react";
 import { FaSignOutAlt, FaTachometerAlt, FaProjectDiagram, FaRocket, FaEnvelope, FaCog } from "react-icons/fa";
 
 const adminNavLinks = [
-    { name: "Dashboard", href: "/admin/dashboard", icon: FaTachometerAlt },
-    { name: "Projects", href: "/admin/projects", icon: FaProjectDiagram },
+    { name: "Dashboard", href: "/dashboard", icon: FaTachometerAlt },
+    { name: "Projects", href: "/dashboard/project", icon: FaProjectDiagram },
     { name: "Journey", href: "/admin/journey", icon: FaRocket },
     { name: "Inquiries", href: "/admin/inquiries", icon: FaEnvelope },
     { name: "Settings", href: "/admin/settings", icon: FaCog },
