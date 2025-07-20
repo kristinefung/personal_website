@@ -172,6 +172,55 @@ export async function PATCH(
     }
 }
 
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    try {
+        // Verify authentication
+        const authResult = await verifyAuthToken(request);
+        if (!authResult.success) {
+            return NextResponse.json(
+                { error: authResult.error || 'Authentication failed' },
+                { status: 401 }
+            );
+        }
+
+        const { id } = await params;
+        const projectId = parseInt(id);
+
+        if (isNaN(projectId)) {
+            return NextResponse.json(
+                { error: 'Invalid project ID' },
+                { status: 400 }
+            );
+        }
+
+        // Check if project exists
+        const existingProject = await projectRepository.findById(projectId);
+        if (!existingProject) {
+            return NextResponse.json(
+                { error: 'Project not found' },
+                { status: 404 }
+            );
+        }
+
+        // Soft delete the project
+        await projectRepository.delete(projectId, authResult.userId);
+
+        return NextResponse.json({
+            message: 'Project deleted successfully'
+        }, { status: 200 });
+
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        return NextResponse.json(
+            { error: 'Internal server error. Please try again later.' },
+            { status: 500 }
+        );
+    }
+}
+
 // Helper function to find or create technologies
 async function findOrCreateTechnologies(technologyNames: string[]): Promise<number[]> {
     const technologyIds: number[] = [];
