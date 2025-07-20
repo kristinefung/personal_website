@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ProjectRepository, UpdateProjectData } from '@/lib/repositories/projectRepository';
+import { TechnologyRepository } from '@/lib/repositories/technologyRepository';
 import { verifyAuthToken } from '@/lib/utils/auth';
 
 const projectRepository = new ProjectRepository();
+const technologyRepository = new TechnologyRepository();
 
 export async function GET(
     request: NextRequest,
@@ -73,7 +75,7 @@ export async function PATCH(
 
         // Parse request body
         const body = await request.json();
-        const { name, description, githubUrl, projectUrl } = body;
+        const { name, description, githubUrl, projectUrl, technologies } = body;
 
         // Validate input
         if (name !== undefined && (!name || name.trim().length === 0)) {
@@ -132,11 +134,29 @@ export async function PATCH(
         }
 
         // Update project
-        const updatedProject = await projectRepository.update(
+        await projectRepository.update(
             projectId,
             updateData,
             authResult.userId
         );
+
+        // Handle technologies if provided
+        if (technologies !== undefined) {
+            if (technologies && technologies.trim()) {
+                const technologyNames = technologies.split(',')
+                    .map((tech: string) => tech.trim())
+                    .filter((tech: string) => tech.length > 0);
+
+                const technologyIds = await findOrCreateTechnologies(technologyNames);
+                await projectRepository.updateTechnologies(projectId, technologyIds);
+            } else {
+                // Clear all technologies if empty string provided
+                await projectRepository.updateTechnologies(projectId, []);
+            }
+        }
+
+        // Fetch the updated project with technologies
+        const updatedProject = await projectRepository.findById(projectId);
 
         return NextResponse.json({
             message: 'Project updated successfully',
@@ -150,6 +170,28 @@ export async function PATCH(
             { status: 500 }
         );
     }
+}
+
+// Helper function to find or create technologies
+async function findOrCreateTechnologies(technologyNames: string[]): Promise<number[]> {
+    const technologyIds: number[] = [];
+
+    for (const name of technologyNames) {
+        // Try to find existing technology
+        let technology = await technologyRepository.findByName(name);
+
+        // Create if doesn't exist
+        if (!technology) {
+            technology = await technologyRepository.create({
+                name,
+                color: '#FFFFFF'
+            });
+        }
+
+        technologyIds.push(technology.id);
+    }
+
+    return technologyIds;
 }
 
 // Helper function to validate URLs
