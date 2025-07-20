@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({
     onToggleSidebar
 }) => {
     return (
-        <header className="fixed top-0 right-0 left-0 lg:left-64 bg-white shadow-sm border-b border-gray-200 px-6 py-4 z-30">
+        <header className="fixed top-0 right-0 left-0 lg:left-64 bg-[#f0f4f8] shadow-sm border-b border-gray-200 px-6 py-4 z-30">
             <div className="flex items-center justify-between">
                 {/* Left side - Toggle and Title */}
                 <div className="flex items-center space-x-4">

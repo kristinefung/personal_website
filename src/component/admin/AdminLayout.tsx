@@ -82,7 +82,7 @@ export default function AdminLayout({
     }
 
     return (
-        <main className="bg-[#0a1628] min-h-screen">
+        <main className="bg-[#f0f4f8] min-h-screen">
             <AdminSidebar
                 sidebarOpen={sidebarOpen}
                 onToggleSidebar={toggleSidebar}
