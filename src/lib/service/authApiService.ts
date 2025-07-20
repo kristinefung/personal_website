@@ -132,6 +132,22 @@ class AuthApiService {
         return localStorage.getItem('sessionToken');
     }
 
+    isLoggedIn(): boolean {
+        const sessionToken = localStorage.getItem('sessionToken');
+
+        if (!sessionToken) {
+            return false;
+        }
+
+        // Check if JWT token is expired by decoding it
+        if (this.isTokenExpired(sessionToken)) {
+            this.clearSession();
+            return false;
+        }
+
+        return true;
+    }
+
     private clearSession(): void {
         localStorage.removeItem('sessionToken');
         localStorage.removeItem('sessionExpiry');

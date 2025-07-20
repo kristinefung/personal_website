@@ -93,7 +93,7 @@ export default function Login() {
 
                 // Redirect after a short delay
                 setTimeout(() => {
-                    window.location.href = '/'; // TODO: Redirect to dashboard
+                    window.location.href = '/dashboard';
                 }, 1500);
             } else {
                 throw new Error(response.message || 'Login failed');
