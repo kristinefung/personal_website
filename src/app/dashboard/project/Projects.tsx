@@ -3,11 +3,14 @@ import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { projectApi } from "@/lib/service/projectService";
 import { ProjectResponse } from "@/types/api";
+import EditProjectModal from "@/app/dashboard/project/EditProjectModal";
 
 export default function Projects() {
     const [projects, setProjects] = useState<ProjectResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [selectedProject, setSelectedProject] = useState<ProjectResponse | null>(null);
 
     useEffect(() => {
         fetchProjects();
@@ -33,13 +36,26 @@ export default function Projects() {
     };
 
     const handleEditProject = (projectId: number) => {
-        // TODO: Implement edit project functionality
-        console.log("Edit Project clicked for ID:", projectId);
+        const project = projects.find(p => p.id === projectId);
+        if (project) {
+            setSelectedProject(project);
+            setEditModalOpen(true);
+        }
     };
 
     const handleDeleteProject = (projectId: number) => {
         // TODO: Implement delete project functionality
         console.log("Delete Project clicked for ID:", projectId);
+    };
+
+    const handleSaveProject = (projectData: any) => {
+        // TODO: Implement save project functionality
+        console.log("Save project:", projectData);
+    };
+
+    const handleCloseModal = () => {
+        setEditModalOpen(false);
+        setSelectedProject(null);
     };
 
     if (loading) {
@@ -81,7 +97,7 @@ export default function Projects() {
                     <h1 className="text-2xl font-bold text-gray-900">Manage Projects</h1>
                     <button
                         onClick={handleAddProject}
-                        className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                        className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium cursor-pointer"
                     >
                         <FaPlus className="text-sm" />
                         Add Project
@@ -134,14 +150,14 @@ export default function Projects() {
                                                 <div className="flex items-center gap-3">
                                                     <button
                                                         onClick={() => handleEditProject(project.id)}
-                                                        className="text-blue-600 hover:text-blue-800 transition-colors p-1"
+                                                        className="text-blue-600 hover:text-blue-800 transition-colors p-1 cursor-pointer"
                                                         title="Edit Project"
                                                     >
                                                         <FaEdit className="text-lg" />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDeleteProject(project.id)}
-                                                        className="text-red-600 hover:text-red-800 transition-colors p-1"
+                                                        className="text-red-600 hover:text-red-800 transition-colors p-1 cursor-pointer"
                                                         title="Delete Project"
                                                     >
                                                         <FaTrash className="text-lg" />
@@ -170,6 +186,14 @@ export default function Projects() {
                         </button>
                     </div>
                 )}
+
+                {/* Edit Project Modal */}
+                <EditProjectModal
+                    isOpen={editModalOpen}
+                    onClose={handleCloseModal}
+                    project={selectedProject}
+                    onSave={handleSaveProject}
+                />
             </div>
         </div>
     );
