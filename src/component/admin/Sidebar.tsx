@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { FaBars, FaTimes, FaSignOutAlt, FaTachometerAlt, FaProjectDiagram, FaRocket, FaEnvelope, FaCog } from "react-icons/fa";
+import React from "react";
+import { FaSignOutAlt, FaTachometerAlt, FaProjectDiagram, FaRocket, FaEnvelope, FaCog } from "react-icons/fa";
 
 const adminNavLinks = [
     { name: "Dashboard", href: "/admin/dashboard", icon: FaTachometerAlt },
@@ -11,14 +11,19 @@ const adminNavLinks = [
     { name: "Settings", href: "/admin/settings", icon: FaCog },
 ];
 
-interface AdminHeaderProps {
+interface AdminSidebarProps {
     currentPath?: string;
     onLogout?: () => void;
+    sidebarOpen?: boolean;
+    onToggleSidebar?: () => void;
 }
 
-export default function AdminHeader({ currentPath = "", onLogout }: AdminHeaderProps) {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-
+export default function AdminSidebar({
+    currentPath = "",
+    onLogout,
+    sidebarOpen = false,
+    onToggleSidebar
+}: AdminSidebarProps) {
     const handleLogout = () => {
         if (onLogout) {
             onLogout();
@@ -34,26 +39,8 @@ export default function AdminHeader({ currentPath = "", onLogout }: AdminHeaderP
         return currentPath === href || currentPath.startsWith(href);
     };
 
-    const toggleSidebar = () => {
-        setSidebarOpen(!sidebarOpen);
-    };
-
     return (
         <>
-            {/* Mobile Header */}
-            <header className="lg:hidden fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 bg-[#0a1628] z-30 shadow-lg border-b border-gray-700">
-                <div className="text-xl font-bold text-[#7fffd4] font-mono">
-                    &lt;Admin/&gt;
-                </div>
-                <button
-                    onClick={toggleSidebar}
-                    className="text-[#7fffd4] text-xl p-2 rounded-lg hover:bg-[#7fffd4]/10 transition-colors"
-                    aria-label="Toggle sidebar"
-                >
-                    {sidebarOpen ? <FaTimes /> : <FaBars />}
-                </button>
-            </header>
-
             {/* Sidebar */}
             <aside className={`fixed top-0 left-0 h-screen w-64 bg-[#112240] border-r border-gray-700 z-40 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
                 } lg:translate-x-0`}>
@@ -73,7 +60,7 @@ export default function AdminHeader({ currentPath = "", onLogout }: AdminHeaderP
                             <a
                                 key={link.name}
                                 href={link.href}
-                                onClick={() => setSidebarOpen(false)}
+                                onClick={() => onToggleSidebar && onToggleSidebar()}
                                 className={`flex items-center gap-3 px-4 py-3 mb-2 rounded-lg transition-all duration-200 text-sm font-medium ${isActive(link.href)
                                     ? 'bg-[#7fffd4]/10 text-[#7fffd4] border-l-4 border-[#7fffd4]'
                                     : 'text-gray-300 hover:text-[#7fffd4] hover:bg-[#7fffd4]/5'
@@ -102,7 +89,7 @@ export default function AdminHeader({ currentPath = "", onLogout }: AdminHeaderP
             {sidebarOpen && (
                 <div
                     className="lg:hidden fixed inset-0 bg-black/50 z-30"
-                    onClick={() => setSidebarOpen(false)}
+                    onClick={onToggleSidebar}
                 ></div>
             )}
         </>
