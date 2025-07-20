@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
-import { enquiryApi } from "@/lib/api/enquiryApi";
-import { profileApi } from "@/lib/api/profileApi";
+import { enquiryApi } from "@/lib/service/enquiryService";
+import { profileApi } from "@/lib/service/profileService";
 import { CreateEnquiryRequest, ProfileResponse } from "@/types/api";
 
 interface FormData {

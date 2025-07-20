@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { profileApi } from '@/lib/api/profileApi';
+import { profileApi } from '@/lib/service/profileService';
 import { ProfileResponse } from '@/types/api';
 
 export default function About() {
