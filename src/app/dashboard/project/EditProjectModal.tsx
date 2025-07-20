@@ -68,7 +68,7 @@ export default function EditProjectModal({ isOpen, onClose, project, onSave }: E
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form autoComplete="off" onSubmit={handleSubmit} className="p-6 space-y-4">
                     {/* Project Title */}
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
