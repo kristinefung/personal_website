@@ -5,6 +5,7 @@ import { projectApi } from "@/lib/service/projectService";
 import { ProjectResponse } from "@/types/api";
 import EditProjectModal from "@/app/dashboard/project/EditProjectModal";
 import AddProjectModal from "@/app/dashboard/project/AddProjectModal";
+import DeleteProjectModal from "@/app/dashboard/project/DeleteProjectModal";
 
 export default function Projects() {
     const [projects, setProjects] = useState<ProjectResponse[]>([]);
@@ -12,7 +13,9 @@ export default function Projects() {
     const [error, setError] = useState<string | null>(null);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [addModalOpen, setAddModalOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState<ProjectResponse | null>(null);
+    const [projectToDelete, setProjectToDelete] = useState<ProjectResponse | null>(null);
 
     useEffect(() => {
         fetchProjects();
@@ -70,8 +73,35 @@ export default function Projects() {
     };
 
     const handleDeleteProject = (projectId: number) => {
-        // TODO: Implement delete project functionality
-        console.log("Delete Project clicked for ID:", projectId);
+        const project = projects.find(p => p.id === projectId);
+        if (project) {
+            setProjectToDelete(project);
+            setDeleteModalOpen(true);
+        }
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!projectToDelete) return;
+
+        try {
+            // Call the API to delete the project
+            await projectApi.deleteProject(projectToDelete.id);
+
+            // Remove the project from the list
+            setProjects(prevProjects =>
+                prevProjects.filter(project => project.id !== projectToDelete.id)
+            );
+
+            console.log("Project deleted successfully:", projectToDelete.name);
+        } catch (error) {
+            console.error("Error deleting project:", error);
+            // TODO: Show error message to user
+            alert(error instanceof Error ? error.message : 'Failed to delete project');
+        } finally {
+            // Close the modal and reset state
+            setDeleteModalOpen(false);
+            setProjectToDelete(null);
+        }
     };
 
     const handleSaveProject = async (projectData: any) => {
@@ -112,6 +142,11 @@ export default function Projects() {
 
     const handleCloseAddModal = () => {
         setAddModalOpen(false);
+    };
+
+    const handleCloseDeleteModal = () => {
+        setDeleteModalOpen(false);
+        setProjectToDelete(null);
     };
 
     if (loading) {
@@ -256,6 +291,14 @@ export default function Projects() {
                     onClose={handleCloseEditModal}
                     project={selectedProject}
                     onSave={handleSaveProject}
+                />
+
+                {/* Delete Project Modal */}
+                <DeleteProjectModal
+                    isOpen={deleteModalOpen}
+                    onClose={handleCloseDeleteModal}
+                    onConfirm={handleConfirmDelete}
+                    projectName={projectToDelete?.name || ''}
                 />
             </div>
         </div>
