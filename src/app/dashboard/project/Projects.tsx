@@ -4,12 +4,14 @@ import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { projectApi } from "@/lib/service/projectService";
 import { ProjectResponse } from "@/types/api";
 import EditProjectModal from "@/app/dashboard/project/EditProjectModal";
+import AddProjectModal from "@/app/dashboard/project/AddProjectModal";
 
 export default function Projects() {
     const [projects, setProjects] = useState<ProjectResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [editModalOpen, setEditModalOpen] = useState(false);
+    const [addModalOpen, setAddModalOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState<ProjectResponse | null>(null);
 
     useEffect(() => {
@@ -31,8 +33,32 @@ export default function Projects() {
     };
 
     const handleAddProject = () => {
-        // TODO: Implement add project functionality
-        console.log("Add Project clicked");
+        setAddModalOpen(true);
+    };
+
+    const handleCreateProject = async (projectData: any) => {
+        try {
+            // Prepare the create data
+            const createData = {
+                name: projectData.name,
+                description: projectData.description,
+                githubUrl: projectData.githubUrl,
+                projectUrl: projectData.projectUrl,
+                technologies: projectData.technologies,
+            };
+
+            // Call the API to create the project
+            const newProject = await projectApi.createProject(createData);
+
+            // Add the new project to the list
+            setProjects(prevProjects => [newProject, ...prevProjects]);
+
+            console.log("Project created successfully:", newProject);
+        } catch (error) {
+            console.error("Error creating project:", error);
+            // TODO: Show error message to user
+            alert(error instanceof Error ? error.message : 'Failed to create project');
+        }
     };
 
     const handleEditProject = (projectId: number) => {
@@ -58,6 +84,7 @@ export default function Projects() {
                 description: projectData.description,
                 githubUrl: projectData.githubUrl,
                 projectUrl: projectData.projectUrl,
+                technologies: projectData.technologies,
             };
 
             // Call the API to update the project
@@ -78,9 +105,13 @@ export default function Projects() {
         }
     };
 
-    const handleCloseModal = () => {
+    const handleCloseEditModal = () => {
         setEditModalOpen(false);
         setSelectedProject(null);
+    };
+
+    const handleCloseAddModal = () => {
+        setAddModalOpen(false);
     };
 
     if (loading) {
@@ -212,10 +243,17 @@ export default function Projects() {
                     </div>
                 )}
 
+                {/* Add Project Modal */}
+                <AddProjectModal
+                    isOpen={addModalOpen}
+                    onClose={handleCloseAddModal}
+                    onSave={handleCreateProject}
+                />
+
                 {/* Edit Project Modal */}
                 <EditProjectModal
                     isOpen={editModalOpen}
-                    onClose={handleCloseModal}
+                    onClose={handleCloseEditModal}
                     project={selectedProject}
                     onSave={handleSaveProject}
                 />
