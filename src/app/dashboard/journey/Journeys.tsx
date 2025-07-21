@@ -5,6 +5,7 @@ import { journeyApi } from "@/lib/service/journeyService";
 import { JourneyResponse } from "@/types/api";
 import Table from "@/component/admin/Table";
 import EditJourneyModal from "./EditJourneyModal";
+import AddJourneyModal from "./AddJourneyModal";
 
 export default function Journeys() {
     const [journeys, setJourneys] = useState<JourneyResponse[]>([]);
@@ -68,6 +69,26 @@ export default function Journeys() {
             setJourneys(prev => prev.map(j => j.id === selectedJourney.id ? updatedJourney : j));
         } catch (error) {
             alert(error instanceof Error ? error.message : 'Failed to update journey');
+        }
+    };
+
+    const handleCreateJourney = async (journeyData: any) => {
+        try {
+            // Get token from localStorage or cookie (adjust as needed)
+            const token = localStorage.getItem('sessionToken');
+            const response = await fetch('/api/journeys', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token ? `Bearer ${token}` : '',
+                },
+                body: JSON.stringify(journeyData),
+            });
+            const newJourney = await response.json();
+            if (!response.ok) throw new Error(newJourney.error || 'Failed to create journey');
+            setJourneys(prev => [newJourney, ...prev]);
+        } catch (error) {
+            alert(error instanceof Error ? error.message : 'Failed to create journey');
         }
     };
 
@@ -138,6 +159,11 @@ export default function Journeys() {
                     data={journeys}
                     rowKey={j => j.id}
                     emptyState={<div className="text-gray-500">No journey entries yet.</div>}
+                />
+                <AddJourneyModal
+                    isOpen={addModalOpen}
+                    onClose={handleCloseAddModal}
+                    onSave={handleCreateJourney}
                 />
                 <EditJourneyModal
                     isOpen={editModalOpen}
