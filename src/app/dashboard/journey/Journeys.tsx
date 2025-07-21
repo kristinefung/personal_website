@@ -6,6 +6,7 @@ import { JourneyResponse } from "@/types/api";
 import Table from "@/component/admin/Table";
 import EditJourneyModal from "./EditJourneyModal";
 import AddJourneyModal from "./AddJourneyModal";
+import DeleteJourneyModal from "./DeleteJourneyModal";
 
 export default function Journeys() {
     const [journeys, setJourneys] = useState<JourneyResponse[]>([]);
@@ -92,6 +93,27 @@ export default function Journeys() {
         }
     };
 
+    const handleConfirmDelete = async () => {
+        if (!journeyToDelete) return;
+        try {
+            const token = localStorage.getItem('sessionToken');
+            const response = await fetch(`/api/journeys/${journeyToDelete.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : '',
+                },
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Failed to delete journey');
+            setJourneys(prev => prev.filter(j => j.id !== journeyToDelete.id));
+        } catch (error) {
+            alert(error instanceof Error ? error.message : 'Failed to delete journey');
+        } finally {
+            setDeleteModalOpen(false);
+            setJourneyToDelete(null);
+        }
+    };
+
     const formatYearRange = (startYear: number, endYear: number | null, isCurrent: boolean) => {
         if (isCurrent) return `${startYear} - Present`;
         return endYear ? `${startYear} - ${endYear}` : `${startYear}`;
@@ -170,6 +192,12 @@ export default function Journeys() {
                     onClose={handleCloseEditModal}
                     journey={selectedJourney}
                     onSave={handleSaveJourney}
+                />
+                <DeleteJourneyModal
+                    isOpen={deleteModalOpen}
+                    onClose={handleCloseDeleteModal}
+                    onConfirm={handleConfirmDelete}
+                    journeyTitle={journeyToDelete?.title || ''}
                 />
             </div>
         </div>

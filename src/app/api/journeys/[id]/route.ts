@@ -76,4 +76,37 @@ export async function PATCH(
             { status: 500 }
         );
     }
+}
+
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    try {
+        // Verify authentication
+        const authResult = await verifyAuthToken(request);
+        if (!authResult.success) {
+            return NextResponse.json(
+                { error: authResult.error || 'Authentication failed' },
+                { status: 401 }
+            );
+        }
+        const { id } = await params;
+        const journeyId = parseInt(id);
+        if (isNaN(journeyId)) {
+            return NextResponse.json(
+                { error: 'Invalid journey ID' },
+                { status: 400 }
+            );
+        }
+        // Soft delete (or hard delete if your repo supports it)
+        await journeyRepository.delete(journeyId, authResult.userId);
+        return NextResponse.json({ message: 'Journey deleted successfully' }, { status: 200 });
+    } catch (error) {
+        console.error('Error deleting journey:', error);
+        return NextResponse.json(
+            { error: 'Internal server error. Please try again later.' },
+            { status: 500 }
+        );
+    }
 } 
