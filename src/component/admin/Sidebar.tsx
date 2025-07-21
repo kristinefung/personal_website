@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import { FaSignOutAlt, FaTachometerAlt, FaProjectDiagram, FaRocket, FaEnvelope, FaCog } from "react-icons/fa";
+import { FaSignOutAlt, FaTachometerAlt, FaProjectDiagram, FaRocket, FaEnvelope, FaUser } from "react-icons/fa";
 
 const adminNavLinks = [
     { name: "Dashboard", href: "/dashboard", icon: FaTachometerAlt },
     { name: "Projects", href: "/dashboard/project", icon: FaProjectDiagram },
     { name: "Journey", href: "/dashboard/journey", icon: FaRocket },
     { name: "Inquiries", href: "/dashboard/inquiry", icon: FaEnvelope },
-    { name: "Settings", href: "/admin/settings", icon: FaCog },
+    { name: "Profile", href: "/dashboard/profile", icon: FaUser },
 ];
 
 interface AdminSidebarProps {
