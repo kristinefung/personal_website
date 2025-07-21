@@ -1,4 +1,5 @@
 import { CreateEnquiryRequest, CreateEnquiryResponse, EnquiryResponse, ApiErrorResponse } from '@/types/api';
+import { authApiService } from './authApiService';
 
 class EnquiryApiService {
     private baseUrl = '/api/enquiries';
@@ -27,9 +28,16 @@ class EnquiryApiService {
             url.searchParams.set('includeDeleted', 'true');
         }
 
-        const response = await fetch(url.toString());
-        const result = await response.json();
+        const sessionToken = authApiService.getCurrentSessionToken();
 
+        if (!sessionToken) {
+            throw new Error('No authentication token available');
+        }
+
+        const response = await fetch(url.toString(), {
+            headers: { 'Authorization': `Bearer ${sessionToken}` },
+        });
+        const result = await response.json();
         if (!response.ok) {
             throw new Error(result.error || 'Failed to fetch enquiries');
         }
@@ -38,9 +46,16 @@ class EnquiryApiService {
     }
 
     async getEnquiryById(id: number): Promise<EnquiryResponse> {
-        const response = await fetch(`${this.baseUrl}/${id}`);
-        const result = await response.json();
+        const sessionToken = authApiService.getCurrentSessionToken();
 
+        if (!sessionToken) {
+            throw new Error('No authentication token available');
+        }
+
+        const response = await fetch(`${this.baseUrl}/${id}`, {
+            headers: { 'Authorization': `Bearer ${sessionToken}` },
+        });
+        const result = await response.json();
         if (!response.ok) {
             throw new Error(result.error || 'Failed to fetch enquiry');
         }

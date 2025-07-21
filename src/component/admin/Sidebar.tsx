@@ -7,7 +7,7 @@ const adminNavLinks = [
     { name: "Dashboard", href: "/dashboard", icon: FaTachometerAlt },
     { name: "Projects", href: "/dashboard/project", icon: FaProjectDiagram },
     { name: "Journey", href: "/dashboard/journey", icon: FaRocket },
-    { name: "Inquiries", href: "/admin/inquiries", icon: FaEnvelope },
+    { name: "Inquiries", href: "/dashboard/inquiry", icon: FaEnvelope },
     { name: "Settings", href: "/admin/settings", icon: FaCog },
 ];
 
