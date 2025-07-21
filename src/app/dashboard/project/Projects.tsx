@@ -181,11 +181,11 @@ export default function Projects() {
     }
 
     return (
-        <div className="min-h-screen py-8 px-4 md:px-8">
+        <div className="py-8 px-2 m-2 md:px-8 bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">Manage Projects</h1>
+                    <h2 className="text-2xl font-bold text-gray-900">Manage Projects</h2>
                     <button
                         onClick={handleAddProject}
                         className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors font-medium cursor-pointer"
@@ -194,10 +194,9 @@ export default function Projects() {
                         Add Project
                     </button>
                 </div>
-
                 {/* Projects Table */}
                 {projects.length > 0 ? (
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full">
                                 <thead className="bg-gray-50 border-b border-gray-200">
