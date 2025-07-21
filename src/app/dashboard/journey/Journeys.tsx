@@ -4,6 +4,7 @@ import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { journeyApi } from "@/lib/service/journeyService";
 import { JourneyResponse } from "@/types/api";
 import Table from "@/component/admin/Table";
+import EditJourneyModal from "./EditJourneyModal";
 
 export default function Journeys() {
     const [journeys, setJourneys] = useState<JourneyResponse[]>([]);
@@ -57,6 +58,17 @@ export default function Journeys() {
     const handleCloseDeleteModal = () => {
         setDeleteModalOpen(false);
         setJourneyToDelete(null);
+    };
+
+    const handleSaveJourney = async (journeyData: any) => {
+        if (!selectedJourney) return;
+        try {
+            // Call the API to update the journey (assume journeyApi.updateJourney exists)
+            const updatedJourney = await journeyApi.updateJourney(selectedJourney.id, journeyData);
+            setJourneys(prev => prev.map(j => j.id === selectedJourney.id ? updatedJourney : j));
+        } catch (error) {
+            alert(error instanceof Error ? error.message : 'Failed to update journey');
+        }
     };
 
     const formatYearRange = (startYear: number, endYear: number | null, isCurrent: boolean) => {
@@ -127,7 +139,12 @@ export default function Journeys() {
                     rowKey={j => j.id}
                     emptyState={<div className="text-gray-500">No journey entries yet.</div>}
                 />
-                {/* Add/Edit/Delete modals would go here */}
+                <EditJourneyModal
+                    isOpen={editModalOpen}
+                    onClose={handleCloseEditModal}
+                    journey={selectedJourney}
+                    onSave={handleSaveJourney}
+                />
             </div>
         </div>
     );
