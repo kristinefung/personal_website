@@ -6,6 +6,7 @@ import { ProjectResponse } from "@/types/api";
 import EditProjectModal from "@/app/dashboard/project/EditProjectModal";
 import AddProjectModal from "@/app/dashboard/project/AddProjectModal";
 import DeleteProjectModal from "@/app/dashboard/project/DeleteProjectModal";
+import Table from "@/component/admin/Table";
 
 export default function Projects() {
     const [projects, setProjects] = useState<ProjectResponse[]>([]);
@@ -196,70 +197,63 @@ export default function Projects() {
                 </div>
                 {/* Projects Table */}
                 {projects.length > 0 ? (
-                    <div className="overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 border-b border-gray-200">
-                                    <tr>
-                                        <th className="text-left py-4 px-6 font-medium text-gray-700 uppercase tracking-wider text-sm">
-                                            PROJECT
-                                        </th>
-                                        <th className="text-left py-4 px-6 font-medium text-gray-700 uppercase tracking-wider text-sm">
-                                            TECHNOLOGIES
-                                        </th>
-                                        <th className="text-left py-4 px-6 font-medium text-gray-700 uppercase tracking-wider text-sm">
-                                            ACTIONS
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200">
-                                    {projects.map((project) => (
-                                        <tr key={project.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="py-4 px-6">
-                                                <div>
-                                                    <div className="font-semibold text-gray-900 text-base">
-                                                        {project.name}
-                                                    </div>
-                                                    {project.description && (
-                                                        <div className="text-gray-500 text-sm mt-1">
-                                                            {project.description}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <div className="flex flex-wrap gap-2">
-                                                    {project.MappingProjectTechnology.map((mapping) => (
-                                                        <span key={mapping.id} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-medium">
-                                                            {mapping.technology.name}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <div className="flex items-center gap-3">
-                                                    <button
-                                                        onClick={() => handleEditProject(project.id)}
-                                                        className="text-blue-600 hover:text-blue-800 transition-colors p-1 cursor-pointer"
-                                                        title="Edit Project"
-                                                    >
-                                                        <FaEdit className="text-lg" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDeleteProject(project.id)}
-                                                        className="text-red-600 hover:text-red-800 transition-colors p-1 cursor-pointer"
-                                                        title="Delete Project"
-                                                    >
-                                                        <FaTrash className="text-lg" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <Table
+                        columns={[
+                            {
+                                key: "name",
+                                header: "PROJECT",
+                                render: (project) => (
+                                    <div>
+                                        <div className="font-semibold text-gray-900 text-base">
+                                            {project.name}
+                                        </div>
+                                        {project.description && (
+                                            <div className="text-gray-500 text-sm mt-1">
+                                                {project.description}
+                                            </div>
+                                        )}
+                                    </div>
+                                ),
+                            },
+                            {
+                                key: "technologies",
+                                header: "TECHNOLOGIES",
+                                render: (project) => (
+                                    <div className="flex flex-wrap gap-2">
+                                        {project.MappingProjectTechnology.map((mapping) => (
+                                            <span key={mapping.id} className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-medium">
+                                                {mapping.technology.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                ),
+                            },
+                            {
+                                key: "actions",
+                                header: "ACTIONS",
+                                render: (project) => (
+                                    <div className="flex items-center gap-3">
+                                        <button
+                                            onClick={() => handleEditProject(project.id)}
+                                            className="text-blue-600 hover:text-blue-800 transition-colors p-1 cursor-pointer"
+                                            title="Edit Project"
+                                        >
+                                            <FaEdit className="text-lg" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteProject(project.id)}
+                                            className="text-red-600 hover:text-red-800 transition-colors p-1 cursor-pointer"
+                                            title="Delete Project"
+                                        >
+                                            <FaTrash className="text-lg" />
+                                        </button>
+                                    </div>
+                                ),
+                            },
+                        ]}
+                        data={projects}
+                        rowKey={(project) => project.id}
+                    />
                 ) : (
                     /* Empty State */
                     <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
