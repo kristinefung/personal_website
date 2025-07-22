@@ -49,6 +49,7 @@ export default function Projects() {
                 githubUrl: projectData.githubUrl,
                 projectUrl: projectData.projectUrl,
                 technologies: projectData.technologies,
+                imagePath: projectData.imagePath,
             };
 
             // Call the API to create the project
@@ -116,8 +117,9 @@ export default function Projects() {
                 githubUrl: projectData.githubUrl,
                 projectUrl: projectData.projectUrl,
                 technologies: projectData.technologies,
+                imagePath: projectData.imagePath,
             };
-
+            console.log(updateData);
             // Call the API to update the project
             const updatedProject = await projectApi.updateProject(selectedProject.id, updateData);
 

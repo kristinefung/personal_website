@@ -17,7 +17,10 @@ export default function EditProjectModal({ isOpen, onClose, project, onSave }: E
         technologies: "",
         githubUrl: "",
         projectUrl: "",
+        imagePath: "",
     });
+    const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+    const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
     useEffect(() => {
         if (project) {
@@ -27,7 +30,10 @@ export default function EditProjectModal({ isOpen, onClose, project, onSave }: E
                 technologies: project.MappingProjectTechnology.map(m => m.technology.name).join(", "),
                 githubUrl: project.githubUrl || "",
                 projectUrl: project.projectUrl || "",
+                imagePath: project.imagePath || "",
             });
+            setSelectedImageFile(null);
+            setPreviewImageUrl(null);
         }
     }, [project]);
 
@@ -36,11 +42,39 @@ export default function EditProjectModal({ isOpen, onClose, project, onSave }: E
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setSelectedImageFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => setPreviewImageUrl(reader.result as string);
+        reader.readAsDataURL(file);
+
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: Implement save functionality
-        console.log("Save project data:", formData);
-        onSave(formData);
+        console.log(selectedImageFile?.name);
+        // Upload image if a new one was selected
+        if (selectedImageFile) {
+            const formDataUpload = new FormData();
+            formDataUpload.append('file', selectedImageFile);
+
+            const uploadRes = await fetch('/api/images/upload', {
+                method: 'POST',
+                body: formDataUpload,
+            });
+            const uploadData = await uploadRes.json();
+
+            if (!uploadRes.ok) {
+                throw new Error(uploadData.error || 'Failed to upload image');
+            }
+
+            formData.imagePath = uploadData.path;
+            console.log(formData.imagePath);
+        }
+        console.log(formData);
+        onSave({ ...formData });
         onClose();
     };
 
@@ -69,6 +103,19 @@ export default function EditProjectModal({ isOpen, onClose, project, onSave }: E
 
                 {/* Form */}
                 <form autoComplete="off" onSubmit={handleSubmit} className="p-6 space-y-4">
+                    {/* Project Image */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Project Image</label>
+                        <input type="file" accept="image/*" onChange={handleFileChange} />
+                        {previewImageUrl ? (
+                            <img src={previewImageUrl} alt="Preview" className="mt-2 w-full h-40 object-cover rounded-lg border" />
+                        ) : formData.imagePath ? (
+                            <img src={`/api/images/${formData.imagePath}`} alt="Current" className="mt-2 w-full h-40 object-cover rounded-lg border" />
+                        ) : project?.imagePath ? (
+                            <img src={`/api/images/${project.imagePath}`} alt="Current" className="mt-2 w-full h-40 object-cover rounded-lg border" />
+                        ) : null}
+                    </div>
+
                     {/* Project Title */}
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
