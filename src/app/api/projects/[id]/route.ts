@@ -75,7 +75,7 @@ export async function PATCH(
 
         // Parse request body
         const body = await request.json();
-        const { name, description, githubUrl, projectUrl, technologies } = body;
+        const { name, description, githubUrl, projectUrl, technologies, imagePath } = body;
 
         // Validate input
         if (name !== undefined && (!name || name.trim().length === 0)) {
@@ -131,6 +131,10 @@ export async function PATCH(
 
         if (projectUrl !== undefined) {
             updateData.projectUrl = projectUrl.trim() || null;
+        }
+
+        if (imagePath !== undefined) {
+            updateData.imagePath = imagePath.trim() || null;
         }
 
         // Update project

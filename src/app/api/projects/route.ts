@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
         // Parse request body
         const body = await request.json();
-        const { name, description, githubUrl, projectUrl, technologies } = body;
+        const { name, description, githubUrl, projectUrl, technologies, imagePath } = body;
 
         // Validate required fields
         if (!name || name.trim().length === 0) {
@@ -96,6 +96,7 @@ export async function POST(request: NextRequest) {
             description: description?.trim() || undefined,
             githubUrl: githubUrl?.trim() || undefined,
             projectUrl: projectUrl?.trim() || undefined,
+            imagePath: imagePath?.trim() || undefined,
             createdBy: authResult.userId,
         };
 
