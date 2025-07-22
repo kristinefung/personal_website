@@ -14,6 +14,9 @@ export default function Profile() {
         githubUrl: "",
         linkedinUrl: "",
     });
+    const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+    const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         fetchProfile();
@@ -46,17 +49,76 @@ export default function Profile() {
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: Implement update profile API call
-        alert("Save functionality not implemented");
+
+        try {
+            setLoading(true);
+            let updatedFormData = { ...formData };
+
+            // Upload image if a new one was selected
+            if (selectedImageFile) {
+                const formDataUpload = new FormData();
+                formDataUpload.append('file', selectedImageFile);
+
+                const uploadRes = await fetch('/api/images/upload', {
+                    method: 'POST',
+                    body: formDataUpload,
+                });
+                const uploadData = await uploadRes.json();
+
+                if (!uploadRes.ok) {
+                    throw new Error(uploadData.error || 'Failed to upload image');
+                }
+
+                updatedFormData.profileImagePath = uploadData.path;
+                console.log(updatedFormData.profileImagePath);
+            }
+
+            // TODO: Implement update profile API call
+            if (profile?.id) {
+                await profileApi.updateProfile(profile.id, {
+                    email: updatedFormData.email,
+                    bio: updatedFormData.bio,
+                    profileImagePath: updatedFormData.profileImagePath,
+                    githubUrl: updatedFormData.githubUrl,
+                    linkedinUrl: updatedFormData.linkedinUrl,
+                });
+            }
+            // For now, just update local state
+            setFormData(updatedFormData);
+            setSelectedImageFile(null);
+            setPreviewImageUrl(null);
+
+            alert("Profile saved successfully!");
+        } catch (err) {
+            alert(err instanceof Error ? err.message : 'Failed to save profile');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChangePhoto = () => {
-        // TODO: Implement change photo logic
-        alert("Change photo not implemented");
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setSelectedImageFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreviewImageUrl(reader.result as string);
+        };
+        reader.readAsDataURL(file);
     };
 
     const handleRemovePhoto = () => {
+        setSelectedImageFile(null);
+        setPreviewImageUrl(null);
         setFormData(prev => ({ ...prev, profileImagePath: "" }));
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
     };
 
     if (loading) {
@@ -69,6 +131,17 @@ export default function Profile() {
     // Get initials for avatar
     const initials = (profile?.createdByUser?.name?.[0] || "").toUpperCase();
 
+    // Helper function to get the correct image URL
+    const getImageUrl = (imagePath: string) => {
+        if (!imagePath) return "";
+        // If path already starts with /api/images, use it as is
+        if (imagePath.startsWith('/api/images')) {
+            return imagePath;
+        }
+        // Otherwise, prepend /api/images
+        return `/api/images${imagePath}`;
+    };
+
     return (
         <div className="py-8 px-2 m-2 md:px-8 bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="max-w-4xl mx-auto">
@@ -76,8 +149,29 @@ export default function Profile() {
                 <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                     {/* Avatar and photo actions */}
                     <div className="flex flex-col items-center gap-4">
-                        <div className="w-40 h-40 rounded-full bg-blue-900 flex items-center justify-center text-white text-5xl font-bold mb-2">
-                            {initials}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            onChange={handleFileChange}
+                        />
+                        <div className="w-40 h-40 rounded-full bg-blue-900 flex items-center justify-center text-white text-5xl font-bold mb-2 overflow-hidden">
+                            {previewImageUrl ? (
+                                <img
+                                    src={previewImageUrl}
+                                    alt="Profile Preview"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : formData.profileImagePath ? (
+                                <img
+                                    src={getImageUrl(formData.profileImagePath)}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                initials
+                            )}
                         </div>
                         <button
                             type="button"
@@ -85,13 +179,6 @@ export default function Profile() {
                             className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
                         >
                             Change Photo
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleRemovePhoto}
-                            className="w-full px-4 py-2 bg-teal-300 text-gray-900 rounded-lg font-semibold hover:bg-teal-400 transition-colors"
-                        >
-                            Remove Photo
                         </button>
                     </div>
                     {/* Profile fields */}
