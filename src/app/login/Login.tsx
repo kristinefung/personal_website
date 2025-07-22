@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { authApiService } from "@/lib/service/authApiService";
 import { LoginRequest } from "@/types/auth";
@@ -30,6 +30,12 @@ export default function Login() {
     });
 
     const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && authApiService.isLoggedIn()) {
+            window.location.href = '/dashboard';
+        }
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
