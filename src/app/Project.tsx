@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaCode, FaChartBar, FaMobileAlt, FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import Image from 'next/image';
-import { projectApi } from '@/lib/service/projectService';
+import { projectApi } from '@/service/projectService';
 import { ProjectResponse } from '@/types/api';
 
 // Default icons for projects without specific icons

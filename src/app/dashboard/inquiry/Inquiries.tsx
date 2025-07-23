@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { enquiryApi } from "@/lib/service/enquiryService";
+import { enquiryApi } from "@/service/enquiryService";
 import { EnquiryResponse } from "@/types/api";
 import Table from "@/component/admin/Table";
 

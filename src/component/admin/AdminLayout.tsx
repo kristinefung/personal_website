@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { authApiService } from "@/lib/service/authApiService";
+import { authApiService } from "@/service/authApiService";
 import AdminSidebar from "@/component/admin/Sidebar";
 import Header from "@/component/admin/Header";
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { journeyApi } from "@/lib/service/journeyService";
+import { journeyApi } from "@/service/journeyService";
 import { JourneyResponse } from "@/types/api";
 import Table from "@/component/admin/Table";
 import EditJourneyModal from "./EditJourneyModal";

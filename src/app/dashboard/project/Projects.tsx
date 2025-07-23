@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { projectApi } from "@/lib/service/projectService";
+import { projectApi } from "@/service/projectService";
 import { ProjectResponse } from "@/types/api";
 import EditProjectModal from "@/app/dashboard/project/EditProjectModal";
 import AddProjectModal from "@/app/dashboard/project/AddProjectModal";

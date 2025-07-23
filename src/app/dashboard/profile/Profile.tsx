@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { profileApi } from "@/lib/service/profileService";
+import { profileApi } from "@/service/profileService";
 import { ProfileResponse } from "@/types/api";
 
 export default function Profile() {

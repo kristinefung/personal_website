@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { journeyApi } from '@/lib/service/journeyService';
+import { journeyApi } from '@/service/journeyService';
 import { JourneyResponse } from '@/types/api';
 
 export default function Journey() {

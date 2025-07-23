@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { authApiService } from "@/lib/service/authApiService";
+import { authApiService } from "@/service/authApiService";
 import { LoginRequest } from "@/types/auth";
 
 interface LoginFormData {
