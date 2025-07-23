@@ -19,7 +19,6 @@ interface AdminSidebarProps {
 }
 
 export default function AdminSidebar({
-    currentPath = "",
     onLogout,
     sidebarOpen = false,
     onToggleSidebar
@@ -36,7 +35,7 @@ export default function AdminSidebar({
     };
 
     const isActive = (href: string) => {
-        return currentPath === href || currentPath.startsWith(href);
+        return window.location.pathname === href;
     };
 
     return (
@@ -61,9 +60,10 @@ export default function AdminSidebar({
                                 key={link.name}
                                 href={link.href}
                                 onClick={() => onToggleSidebar && onToggleSidebar()}
-                                className={`flex items-center gap-3 px-4 py-3 mb-2 rounded-lg transition-all duration-200 text-sm font-medium ${isActive(link.href)
-                                    ? 'bg-[#7fffd4]/10 text-[#7fffd4] border-l-4 border-[#7fffd4]'
-                                    : 'text-gray-300 hover:text-[#7fffd4] hover:bg-[#7fffd4]/5'
+                                className={`flex items-center gap-3 px-4 py-3 mb-2 rounded-lg transition-all duration-200 text-sm font-medium 
+                                    ${isActive(link.href)
+                                        ? 'text-[#7fffd4] bg-[#7fffd4]/5'
+                                        : 'text-gray-300 hover:text-[#7fffd4] hover:bg-[#7fffd4]/5'
                                     }`}
                             >
                                 <IconComponent className="text-lg flex-shrink-0" />
