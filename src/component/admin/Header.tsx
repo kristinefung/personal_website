@@ -11,10 +11,9 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({
-    title = "Dashboard",
-    userName = "John Doe",
-    userRole = "Administrator",
-    userInitials = "JD",
+    title = "",
+    userName = "",
+    userInitials = "",
     sidebarOpen = false,
     onToggleSidebar
 }) => {
@@ -38,7 +37,6 @@ const Header: React.FC<HeaderProps> = ({
                 <div className="flex items-center space-x-3">
                     <div className="text-right">
                         <div className="text-sm font-medium text-gray-900">{userName}</div>
-                        <div className="text-xs text-gray-500">{userRole}</div>
                     </div>
                     <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                         <span className="text-white text-sm font-medium">{userInitials}</span>

@@ -186,6 +186,13 @@ class AuthApiService {
             },
         });
     }
+
+    async getCurrentUser(): Promise<{ id: number; name: string; email: string }> {
+        return this.makeAuthenticatedRequest<{ id: number; name: string; email: string }>(
+            '/api/me',
+            { method: 'GET' }
+        );
+    }
 }
 
 export const authApiService = new AuthApiService(); 

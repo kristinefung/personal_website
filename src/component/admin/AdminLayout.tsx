@@ -44,17 +44,9 @@ export default function AdminLayout({
                 return;
             }
 
-            // For now, we'll extract user info from the JWT token
-            // In a real app, you might want to fetch user details from an API
-            const token = authApiService.getCurrentSessionToken();
-            if (token) {
-                // This is a simplified approach - ideally you'd have a proper user info endpoint
-                setUser({
-                    id: 1, // Would come from JWT or API
-                    name: userName, // Would come from JWT or API
-                    email: "user@example.com" // Would come from JWT or API
-                });
-            }
+            // Fetch user info from API
+            const userInfo = await authApiService.getCurrentUser();
+            setUser(userInfo);
         } catch (error) {
             console.error('Authentication check failed:', error);
             window.location.href = '/login';
@@ -90,9 +82,8 @@ export default function AdminLayout({
             <div className="flex-1 lg:ml-64">
                 <Header
                     title={title}
-                    userName={userName}
-                    userRole={userRole}
-                    userInitials={userInitials}
+                    userName={user.name}
+                    userInitials={user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : ''}
                     sidebarOpen={sidebarOpen}
                     onToggleSidebar={toggleSidebar}
                 />
