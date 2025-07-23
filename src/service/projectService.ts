@@ -1,5 +1,5 @@
 import { ProjectResponse, ProjectFilters } from '@/types/api';
-import { authApiService } from '@/lib/service/authApiService';
+import { authApiService } from '@/service/authApiService';
 
 interface UpdateProjectRequest {
     name?: string;

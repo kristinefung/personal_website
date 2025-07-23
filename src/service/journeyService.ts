@@ -1,5 +1,5 @@
 import { JourneyResponse, JourneyFilters } from '@/types/api';
-import { authApiService } from './authApiService';
+import { authApiService } from '@/service/authApiService';
 class JourneyApiService {
     private baseUrl = '/api/journeys';
 

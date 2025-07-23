@@ -1,5 +1,5 @@
 import { TechnologyResponse } from '@/types/api';
-import { authApiService } from '@/lib/service/authApiService';
+import { authApiService } from '@/service/authApiService';
 
 interface CreateTechnologyRequest {
     name: string;

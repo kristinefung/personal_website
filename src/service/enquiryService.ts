@@ -1,5 +1,5 @@
 import { CreateEnquiryRequest, CreateEnquiryResponse, EnquiryResponse, ApiErrorResponse } from '@/types/api';
-import { authApiService } from './authApiService';
+import { authApiService } from '@/service/authApiService';
 
 class EnquiryApiService {
     private baseUrl = '/api/enquiries';
