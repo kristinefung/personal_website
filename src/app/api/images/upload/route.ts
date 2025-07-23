@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
         const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
         const filePath = join(uploadsDir, fileName);
         await writeFile(filePath, buffer);
-        return NextResponse.json({ path: `/${fileName}` }, { status: 201 });
+        return NextResponse.json({ path: `${fileName}` }, { status: 201 });
     } catch (error) {
         console.error('Error uploading image:', error);
         return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });

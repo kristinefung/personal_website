@@ -31,7 +31,7 @@ export default function About() {
     const getImageUrl = (imagePath: string | null | undefined) => {
         if (!imagePath) return "/square-placeholder.jpg";
 
-        return `/api/images${imagePath}`;
+        return `/api/images/${imagePath}`;
     };
 
     if (loading) {

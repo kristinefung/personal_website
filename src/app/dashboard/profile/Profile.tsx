@@ -139,7 +139,7 @@ export default function Profile() {
             return imagePath;
         }
         // Otherwise, prepend /api/images
-        return `/api/images${imagePath}`;
+        return `/api/images/${imagePath}`;
     };
 
     return (
