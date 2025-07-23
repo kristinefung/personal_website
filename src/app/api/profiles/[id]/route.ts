@@ -3,10 +3,11 @@ import { ProfileRepository } from '@/lib/repositories/profileRepository';
 
 const profileRepository = new ProfileRepository();
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const id = parseInt(params.id);
-        if (!id) {
+        const { id } = await params;
+        const parsedId = parseInt(id);
+        if (!parsedId) {
             return NextResponse.json({ error: 'Profile ID is required' }, { status: 400 });
         }
         const body = await request.json();
@@ -39,7 +40,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
         // Update profile
         const updatedProfile = await profileRepository.update(
-            id,
+            parsedId,
             {
                 bio: body.bio,
                 profileImagePath: body.profileImagePath,
