@@ -4,8 +4,7 @@ import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { journeyApi } from "@/service/journeyService";
 import { JourneyResponse } from "@/types/api";
 import Table from "@/component/admin/Table";
-import EditJourneyModal from "./EditJourneyModal";
-import AddJourneyModal from "./AddJourneyModal";
+import JourneyFormModal from "./JourneyFormModal";
 import DeleteJourneyModal from "./DeleteJourneyModal";
 
 export default function Journeys() {
@@ -182,16 +181,18 @@ export default function Journeys() {
                     rowKey={j => j.id}
                     emptyState={<div className="text-gray-500">No journey entries yet.</div>}
                 />
-                <AddJourneyModal
+                <JourneyFormModal
                     isOpen={addModalOpen}
                     onClose={handleCloseAddModal}
                     onSave={handleCreateJourney}
+                    mode="ADD"
                 />
-                <EditJourneyModal
+                <JourneyFormModal
                     isOpen={editModalOpen}
                     onClose={handleCloseEditModal}
-                    journey={selectedJourney}
                     onSave={handleSaveJourney}
+                    mode="EDIT"
+                    journey={selectedJourney}
                 />
                 <DeleteJourneyModal
                     isOpen={deleteModalOpen}
