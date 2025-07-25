@@ -4,7 +4,7 @@ import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 import { enquiryApi } from "@/service/enquiryService";
 import { profileApi } from "@/service/profileService";
 import { CreateEnquiryRequest, ProfileResponse } from "@/types/api";
-
+import TextField from "@/component/admin/form/TextField";
 interface FormData {
     name: string;
     email: string;
@@ -132,24 +132,24 @@ export default function Contact() {
 
                 <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex-1">
-                        <label className="block text-gray-300 mb-2" htmlFor="email">Email</label>
-                        <input
-                            className="w-full p-2 rounded bg-[#1e3557] text-white focus:outline-none focus:ring-2 focus:ring-[#7fffd4]"
+                        <TextField
+                            cssStyle="CUSTOMER"
                             type="email"
                             id="email"
                             name="email"
+                            label="Email"
                             value={formData.email}
                             onChange={handleInputChange}
                             disabled={status.isSubmitting}
                         />
                     </div>
                     <div className="flex-1">
-                        <label className="block text-gray-300 mb-2" htmlFor="phone">Phone</label>
-                        <input
-                            className="w-full p-2 rounded bg-[#1e3557] text-white focus:outline-none focus:ring-2 focus:ring-[#7fffd4]"
+                        <TextField
+                            cssStyle="CUSTOMER"
                             type="text"
                             id="phone"
                             name="phone"
+                            label="Phone"
                             value={formData.phone}
                             onChange={handleInputChange}
                             disabled={status.isSubmitting}
@@ -158,12 +158,13 @@ export default function Contact() {
                 </div>
                 <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex-1">
-                        <label className="block text-gray-300 mb-2" htmlFor="name">Name *</label>
-                        <input
-                            className="w-full p-2 rounded bg-[#1e3557] text-white focus:outline-none focus:ring-2 focus:ring-[#7fffd4]"
+                        <TextField
+                            cssStyle="CUSTOMER"
                             type="text"
                             id="name"
                             name="name"
+                            label="Name"
+                            required
                             value={formData.name}
                             onChange={handleInputChange}
                             disabled={status.isSubmitting}
@@ -171,12 +172,13 @@ export default function Contact() {
                     </div>
                 </div>
                 <div>
-                    <label className="block text-gray-300 mb-2" htmlFor="subject">Subject *</label>
-                    <input
-                        className="w-full p-2 rounded bg-[#1e3557] text-white focus:outline-none focus:ring-2 focus:ring-[#7fffd4]"
+                    <TextField
+                        cssStyle="CUSTOMER"
                         type="text"
                         id="subject"
                         name="subject"
+                        label="Subject"
+                        required
                         value={formData.subject}
                         onChange={handleInputChange}
                         disabled={status.isSubmitting}
