@@ -4,6 +4,7 @@ import { FaTimes } from "react-icons/fa";
 import { JourneyResponse } from "@/types/api";
 import TextField from "@/component/form/TextField";
 import TextArea from "@/component/form/TextArea";
+import Checkbox from "@/component/form/Checkbox";
 
 interface EditJourneyModalProps {
     isOpen: boolean;
@@ -159,17 +160,14 @@ export default function EditJourneyModal({ isOpen, onClose, journey, onSave }: E
 
                     {/* Is Current */}
                     <div className="flex items-center">
-                        <input
-                            type="checkbox"
+                        <Checkbox
+                            cssStyle="ADMIN"
                             id="isCurrent"
                             name="isCurrent"
                             checked={formData.isCurrent}
                             onChange={handleInputChange}
-                            className="mr-2"
+                            label="Currently here"
                         />
-                        <label htmlFor="isCurrent" className="text-sm text-gray-700">
-                            Currently here
-                        </label>
                     </div>
 
                     {/* Action Buttons */}
