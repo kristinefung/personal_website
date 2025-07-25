@@ -1,4 +1,4 @@
-import Profile from "./Profile";
+import Profile from "./_components/Profile";
 import AdminLayout from "@/component/admin/AdminLayout";
 
 export default function SettingsPage() {

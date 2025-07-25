@@ -1,11 +1,11 @@
 "use client";
 
 import Header from "../component/Header";
-import Greeting from "./Greeting";
-import About from "./About";
-import Project from "./Project";
-import Journey from "./Journey";
-import Contact from "./Contact";
+import Greeting from "@/app/_components/Greeting";
+import About from "@/app/_components/About";
+import Project from "@/app/_components/Project";
+import Journey from "@/app/_components/Journey";
+import Contact from "@/app/_components/Contact";
 import Footer from "../component/Footer";
 export default function Home() {
   return (

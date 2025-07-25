@@ -1,5 +1,5 @@
 import AdminLayout from "@/component/admin/AdminLayout";
-import Projects from "./Projects";
+import Projects from "./_components/Projects";
 
 export default function ProjectPage() {
     return (

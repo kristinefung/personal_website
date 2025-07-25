@@ -1,4 +1,4 @@
-import Journeys from "./Journeys";
+import Journeys from "./_components/Journeys";
 import AdminLayout from "@/component/admin/AdminLayout";
 
 export default function JourneyPage() {
