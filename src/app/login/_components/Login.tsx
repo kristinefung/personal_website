@@ -133,7 +133,7 @@ export default function Login() {
                     )}
 
                     <TextField
-                        cssStyle="ADMIN"
+                        cssStyle="CUSTOMER"
                         type="email"
                         id="email"
                         name="email"
@@ -145,7 +145,7 @@ export default function Login() {
                         label="Email Address"
                     />
                     <PasswordTextField
-                        cssStyle="ADMIN"
+                        cssStyle="CUSTOMER"
                         id="password"
                         name="password"
                         value={formData.password}
