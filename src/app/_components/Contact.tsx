@@ -5,6 +5,7 @@ import { enquiryApi } from "@/service/enquiryService";
 import { profileApi } from "@/service/profileService";
 import { CreateEnquiryRequest, ProfileResponse } from "@/types/api";
 import TextField from "@/component/admin/form/TextField";
+import TextArea from "@/component/admin/form/TextArea";
 interface FormData {
     name: string;
     email: string;
@@ -156,20 +157,18 @@ export default function Contact() {
                         />
                     </div>
                 </div>
-                <div className="flex flex-col md:flex-row gap-6">
-                    <div className="flex-1">
-                        <TextField
-                            cssStyle="CUSTOMER"
-                            type="text"
-                            id="name"
-                            name="name"
-                            label="Name"
-                            required
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            disabled={status.isSubmitting}
-                        />
-                    </div>
+                <div>
+                    <TextField
+                        cssStyle="CUSTOMER"
+                        type="text"
+                        id="name"
+                        name="name"
+                        label="Name"
+                        required
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        disabled={status.isSubmitting}
+                    />
                 </div>
                 <div>
                     <TextField
@@ -185,12 +184,13 @@ export default function Contact() {
                     />
                 </div>
                 <div>
-                    <label className="block text-gray-300 mb-2" htmlFor="message">Message *</label>
-                    <textarea
-                        className="w-full p-2 rounded bg-[#1e3557] text-white h-32 resize-none focus:outline-none focus:ring-2 focus:ring-[#7fffd4]"
+                    <TextArea
+                        cssStyle="CUSTOMER"
                         id="message"
                         name="message"
                         value={formData.message}
+                        label="Message"
+                        required
                         onChange={handleInputChange}
                         disabled={status.isSubmitting}
                     />
