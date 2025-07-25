@@ -31,12 +31,6 @@ export default function Login() {
 
     const [showPassword, setShowPassword] = useState(false);
 
-    useEffect(() => {
-        if (typeof window !== 'undefined' && authApiService.isLoggedIn()) {
-            window.location.href = '/dashboard';
-        }
-    }, []);
-
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
