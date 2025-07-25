@@ -3,6 +3,7 @@ import TextField from "@/component/form/TextField";
 import TextArea from "@/component/form/TextArea";
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import Modal from "@/component/Modal";
 
 interface AddProjectModalProps {
     isOpen: boolean;
@@ -86,127 +87,103 @@ export default function AddProjectModal({ isOpen, onClose, onSave }: AddProjectM
     if (!isOpen) return null;
 
     return (
-        <div
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-        >
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-                {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-900">Add New Project</h2>
+        <Modal isOpen={isOpen} onClose={onClose} title="Add New Project">
+            <form autoComplete="off" onSubmit={handleSubmit} className="space-y-4">
+                {/* Project Image */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Project Image</label>
+                    <input type="file" accept="image/*" onChange={handleFileChange} />
+                    {previewImageUrl ? (
+                        <img src={previewImageUrl} alt="Preview" className="mt-2 w-full h-40 object-cover rounded-lg border" />
+                    ) : formData.imagePath ? (
+                        <img src={`/api/images/${formData.imagePath}`} alt="Current" className="mt-2 w-full h-40 object-cover rounded-lg border" />
+                    ) : null}
+                </div>
+                {/* Project Title */}
+                <div>
+                    <TextField
+                        cssStyle="ADMIN"
+                        type="text"
+                        id="name"
+                        name="name"
+                        label="Project Title"
+                        required
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="Enter project name"
+                    />
+                </div>
+                {/* Description */}
+                <div>
+                    <TextArea
+                        cssStyle="ADMIN"
+                        id="description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        label="Description"
+                        required
+                        placeholder="Enter project description"
+                    />
+                </div>
+                {/* Technologies */}
+                <div>
+                    <TextField
+                        cssStyle="ADMIN"
+                        type="text"
+                        id="technologies"
+                        name="technologies"
+                        label="Technologies"
+                        required
+                        value={formData.technologies}
+                        onChange={handleInputChange}
+                        placeholder="React, Node.js, MongoDB"
+                    />
+                </div>
+                {/* GitHub URL */}
+                <div>
+                    <TextField
+                        cssStyle="ADMIN"
+                        type="url"
+                        id="githubUrl"
+                        name="githubUrl"
+                        label="GitHub URL"
+                        required
+                        value={formData.githubUrl}
+                        onChange={handleInputChange}
+                        placeholder="https://github.com/username/project"
+                    />
+                </div>
+                {/* Live Demo URL */}
+                <div>
+                    <TextField
+                        cssStyle="ADMIN"
+                        type="url"
+                        id="projectUrl"
+                        name="projectUrl"
+                        label="Live Demo URL"
+                        required
+                        value={formData.projectUrl}
+                        onChange={handleInputChange}
+                        placeholder="https://project-demo.com"
+                    />
+                </div>
+                <div className="flex justify-end gap-3 pt-4">
                     <button
-                        onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        type="button"
+                        onClick={handleCancel}
+                        className="px-4 py-2 bg-teal-400 text-white rounded-lg hover:bg-teal-500 transition-colors"
                     >
-                        <FaTimes className="text-lg" />
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                    >
+                        Create Project
                     </button>
                 </div>
-
-                {/* Form */}
-                <form autoComplete="off" onSubmit={handleSubmit} className="p-6 space-y-4">
-                    {/* Project Image */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Project Image</label>
-                        <input type="file" accept="image/*" onChange={handleFileChange} />
-                        {previewImageUrl ? (
-                            <img src={previewImageUrl} alt="Preview" className="mt-2 w-full h-40 object-cover rounded-lg border" />
-                        ) : formData.imagePath ? (
-                            <img src={`/api/images/${formData.imagePath}`} alt="Current" className="mt-2 w-full h-40 object-cover rounded-lg border" />
-                        ) : null}
-                    </div>
-
-                    {/* Project Title */}
-                    <div>
-                        <TextField
-                            cssStyle="ADMIN"
-                            type="text"
-                            id="name"
-                            name="name"
-                            label="Project Title"
-                            required
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            placeholder="Enter project name"
-                        />
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                        <TextArea
-                            cssStyle="ADMIN"
-                            id="description"
-                            name="description"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                            label="Description"
-                            required
-                            placeholder="Enter project description"
-                        />
-                    </div>
-
-                    {/* Technologies */}
-                    <div>
-                        <TextField
-                            cssStyle="ADMIN"
-                            type="text"
-                            id="technologies"
-                            name="technologies"
-                            label="Technologies"
-                            required
-                            value={formData.technologies}
-                            onChange={handleInputChange}
-                            placeholder="React, Node.js, MongoDB"
-                        />
-                    </div>
-
-                    {/* GitHub URL */}
-                    <div>
-                        <TextField
-                            cssStyle="ADMIN"
-                            type="url"
-                            id="githubUrl"
-                            name="githubUrl"
-                            label="GitHub URL"
-                            required
-                            value={formData.githubUrl}
-                            onChange={handleInputChange}
-                            placeholder="https://github.com/username/project"
-                        />
-                    </div>
-
-                    {/* Live Demo URL */}
-                    <div>
-                        <TextField
-                            cssStyle="ADMIN"
-                            type="url"
-                            id="projectUrl"
-                            name="projectUrl"
-                            label="Live Demo URL"
-                            required
-                            value={formData.projectUrl}
-                            onChange={handleInputChange}
-                            placeholder="https://project-demo.com"
-                        />
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex justify-end gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={handleCancel}
-                            className="px-4 py-2 bg-teal-400 text-white rounded-lg hover:bg-teal-500 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                        >
-                            Create Project
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+            </form>
+        </Modal>
     );
 } 
