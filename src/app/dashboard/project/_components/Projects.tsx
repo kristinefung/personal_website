@@ -3,8 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { projectApi } from "@/service/projectService";
 import { ProjectResponse } from "@/types/api";
-import EditProjectModal from "@/app/dashboard/project/_components/EditProjectModal";
-import AddProjectModal from "@/app/dashboard/project/_components/AddProjectModal";
+import ProjectFormModal from "@/app/dashboard/project/_components/ProjectFormModal";
 import DeleteProjectModal from "@/app/dashboard/project/_components/DeleteProjectModal";
 import Table from "@/component/admin/Table";
 
@@ -274,18 +273,20 @@ export default function Projects() {
                 )}
 
                 {/* Add Project Modal */}
-                <AddProjectModal
+                <ProjectFormModal
                     isOpen={addModalOpen}
                     onClose={handleCloseAddModal}
                     onSave={handleCreateProject}
+                    mode="ADD"
                 />
 
                 {/* Edit Project Modal */}
-                <EditProjectModal
+                <ProjectFormModal
                     isOpen={editModalOpen}
                     onClose={handleCloseEditModal}
-                    project={selectedProject}
                     onSave={handleSaveProject}
+                    mode="EDIT"
+                    project={selectedProject}
                 />
 
                 {/* Delete Project Modal */}
