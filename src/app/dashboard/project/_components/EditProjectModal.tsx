@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { ProjectResponse } from "@/types/api";
-
+import TextField from "@/component/form/TextField";
+import TextArea from "@/component/form/TextArea";
 interface EditProjectModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -118,80 +119,75 @@ export default function EditProjectModal({ isOpen, onClose, project, onSave }: E
 
                     {/* Project Title */}
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                            Project Title
-                        </label>
-                        <input
+                        <TextField
+                            cssStyle="ADMIN"
                             type="text"
                             id="name"
                             name="name"
+                            label="Project Title"
+                            required
                             value={formData.name}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                            required
+                            placeholder="Enter project name"
                         />
                     </div>
 
                     {/* Description */}
                     <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                            Description
-                        </label>
-                        <textarea
+                        <TextArea
+                            cssStyle="ADMIN"
                             id="description"
                             name="description"
                             value={formData.description}
                             onChange={handleInputChange}
-                            rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+                            label="Description"
+                            required
+                            placeholder="Enter project description"
                         />
                     </div>
 
                     {/* Technologies */}
                     <div>
-                        <label htmlFor="technologies" className="block text-sm font-medium text-gray-700 mb-1">
-                            Technologies (comma separated)
-                        </label>
-                        <input
+                        <TextField
+                            cssStyle="ADMIN"
                             type="text"
                             id="technologies"
                             name="technologies"
+                            label="Technologies"
+                            required
                             value={formData.technologies}
                             onChange={handleInputChange}
                             placeholder="React, Node.js, MongoDB"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                         />
                     </div>
 
                     {/* GitHub URL */}
                     <div>
-                        <label htmlFor="githubUrl" className="block text-sm font-medium text-gray-700 mb-1">
-                            GitHub URL
-                        </label>
-                        <input
+                        <TextField
+                            cssStyle="ADMIN"
                             type="url"
                             id="githubUrl"
                             name="githubUrl"
+                            label="GitHub URL"
+                            required
                             value={formData.githubUrl}
                             onChange={handleInputChange}
                             placeholder="https://github.com/username/project"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                         />
                     </div>
 
-                    {/* Demo URL */}
+                    {/* Live Demo URL */}
                     <div>
-                        <label htmlFor="projectUrl" className="block text-sm font-medium text-gray-700 mb-1">
-                            Demo URL
-                        </label>
-                        <input
+                        <TextField
+                            cssStyle="ADMIN"
                             type="url"
                             id="projectUrl"
                             name="projectUrl"
+                            label="Live Demo URL"
+                            required
                             value={formData.projectUrl}
                             onChange={handleInputChange}
                             placeholder="https://project-demo.com"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                         />
                     </div>
 

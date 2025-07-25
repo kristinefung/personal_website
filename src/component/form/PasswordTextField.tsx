@@ -26,7 +26,7 @@ const PasswordTextField = React.forwardRef<HTMLInputElement, PasswordTextFieldPr
                     <input
                         ref={ref}
                         type={showPassword ? "text" : "password"}
-                        className={`p-3 pr-12 rounded ${bgColor} text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#7fffd4] w-full`}
+                        className={`p-2.5 pr-12 rounded ${bgColor} text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#7fffd4] w-full`}
                         {...props}
                     />
                     <button

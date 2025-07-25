@@ -10,8 +10,9 @@ export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputEleme
 
 const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
     ({ label, error, className = "", cssStyle, ...props }, ref) => {
-        const bgColor = cssStyle === "ADMIN" ? "bg-[#f0f4f8]" : "bg-[#1e3557]";
-        const textColor = cssStyle === "ADMIN" ? "text-[#0a1628]" : "text-white";
+        const bgColor = cssStyle === "ADMIN" ? "bg-white" : "bg-[#1e3557]";
+        const textColor = cssStyle === "ADMIN" ? "text-black" : "text-white";
+        const borderColor = cssStyle === "ADMIN" ? "border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" : "focus:outline-none focus:ring-1 focus:ring-[#7fffd4]";
 
         return (
             <div className="flex flex-col">
@@ -23,7 +24,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
                 )}
                 <input
                     ref={ref}
-                    className={`p-3 pr-12 rounded ${bgColor} text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#7fffd4] w-full`}
+                    className={`p-2.5 pr-12 rounded placeholder-gray-400 ${bgColor} ${textColor} ${borderColor} w-full`}
                     {...props}
                 />
                 {error && <span className="text-red-400 text-sm mt-1">{error}</span>}

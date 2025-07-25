@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { JourneyResponse } from "@/types/api";
+import TextField from "@/component/form/TextField";
+import TextArea from "@/component/form/TextArea";
 
 interface EditJourneyModalProps {
     isOpen: boolean;
@@ -88,79 +90,69 @@ export default function EditJourneyModal({ isOpen, onClose, journey, onSave }: E
                 <form autoComplete="off" onSubmit={handleSubmit} className="p-6 space-y-4">
                     {/* Title */}
                     <div>
-                        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                            Title
-                        </label>
-                        <input
+                        <TextField
+                            cssStyle="ADMIN"
                             type="text"
                             id="title"
                             name="title"
                             value={formData.title}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            label="Title"
                             required
                         />
                     </div>
 
                     {/* Institution */}
                     <div>
-                        <label htmlFor="institution" className="block text-sm font-medium text-gray-700 mb-1">
-                            Institution
-                        </label>
-                        <input
+                        <TextField
+                            cssStyle="ADMIN"
                             type="text"
                             id="institution"
                             name="institution"
                             value={formData.institution}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            label="Institution"
                             required
                         />
                     </div>
 
                     {/* Description */}
                     <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                            Description
-                        </label>
-                        <textarea
+                        <TextArea
+                            cssStyle="ADMIN"
                             id="description"
                             name="description"
                             value={formData.description}
                             onChange={handleInputChange}
+                            label="Description"
                             rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
                         />
                     </div>
 
                     {/* Start Year */}
                     <div>
-                        <label htmlFor="startYear" className="block text-sm font-medium text-gray-700 mb-1">
-                            Start Year
-                        </label>
-                        <input
+                        <TextField
+                            cssStyle="ADMIN"
                             type="number"
                             id="startYear"
                             name="startYear"
                             value={formData.startYear}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            label="Start Year"
                             required
                         />
                     </div>
 
                     {/* End Year (disabled if isCurrent) */}
                     <div>
-                        <label htmlFor="endYear" className="block text-sm font-medium text-gray-700 mb-1">
-                            End Year
-                        </label>
-                        <input
+                        <TextField
+                            cssStyle="ADMIN"
                             type="number"
                             id="endYear"
                             name="endYear"
                             value={formData.endYear}
                             onChange={handleInputChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            label="End Year"
                             disabled={formData.isCurrent}
                         />
                     </div>
