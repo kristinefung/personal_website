@@ -1,3 +1,5 @@
+"use client";
+
 import Header from "@/component/Header";
 import Login from "@/app/login/_components/Login";
 import Footer from "@/component/Footer";

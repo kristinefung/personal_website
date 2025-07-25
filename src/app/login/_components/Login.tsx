@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { authApiService } from "@/service/authApiService";
 import { LoginRequest } from "@/types/auth";
+import TextField from "@/component/admin/form/TextField";
+import PasswordTextField from "@/component/admin/form/PasswordTextField";
 
 interface LoginFormData {
     email: string;
@@ -130,51 +132,29 @@ export default function Login() {
                         </div>
                     )}
 
-                    <div className="flex flex-col">
-                        <label htmlFor="email" className="text-[#7fffd4] font-medium mb-2">
-                            Email Address *
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            required
-                            autoComplete="email"
-                            className="p-3 rounded-lg bg-[#0a1628] border border-gray-600 text-white placeholder-gray-400 focus:border-[#7fffd4] focus:outline-none focus:ring-2 focus:ring-[#7fffd4]/20 transition-all duration-200"
-                            placeholder="Enter your email address"
-                            disabled={status.isSubmitting}
-                        />
-                    </div>
-
-                    <div className="flex flex-col">
-                        <label htmlFor="password" className="text-[#7fffd4] font-medium mb-2">
-                            Password *
-                        </label>
-                        <div className="relative">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                id="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                                required
-                                autoComplete="current-password"
-                                className="p-3 pr-12 rounded-lg bg-[#0a1628] border border-gray-600 text-white placeholder-gray-400 focus:border-[#7fffd4] focus:outline-none focus:ring-2 focus:ring-[#7fffd4]/20 transition-all duration-200 w-full"
-                                placeholder="Enter your password"
-                                disabled={status.isSubmitting}
-                            />
-                            <button
-                                type="button"
-                                onClick={togglePasswordVisibility}
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#7fffd4] transition-colors"
-                                disabled={status.isSubmitting}
-                            >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
-                            </button>
-                        </div>
-                    </div>
+                    <TextField
+                        cssStyle="ADMIN"
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="Enter your email address"
+                        disabled={status.isSubmitting}
+                        label="Email Address"
+                    />
+                    <PasswordTextField
+                        cssStyle="ADMIN"
+                        id="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="Enter your password"
+                        disabled={status.isSubmitting}
+                        label="Password"
+                    />
 
                     <div className="flex flex-col gap-4">
                         <button
