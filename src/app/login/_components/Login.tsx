@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { authApiService } from "@/service/authApiService";
 import { LoginRequest } from "@/types/auth";
-import TextField from "@/component/admin/form/TextField";
-import PasswordTextField from "@/component/admin/form/PasswordTextField";
+import TextField from "@/component/form/TextField";
+import PasswordTextField from "@/component/form/PasswordTextField";
 
 interface LoginFormData {
     email: string;

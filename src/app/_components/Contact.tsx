@@ -4,8 +4,8 @@ import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 import { enquiryApi } from "@/service/enquiryService";
 import { profileApi } from "@/service/profileService";
 import { CreateEnquiryRequest, ProfileResponse } from "@/types/api";
-import TextField from "@/component/admin/form/TextField";
-import TextArea from "@/component/admin/form/TextArea";
+import TextField from "@/component/form/TextField";
+import TextArea from "@/component/form/TextArea";
 interface FormData {
     name: string;
     email: string;
