@@ -1,8 +1,8 @@
 "use client";
 
-import Header from "@/component/Header";
+import Header from "@/component/customer/Header";
 import Login from "@/app/login/_components/Login";
-import Footer from "@/component/Footer";
+import Footer from "@/component/customer/Footer";
 import { authApiService } from "@/service/authApiService";
 import { useEffect } from "react";
 
