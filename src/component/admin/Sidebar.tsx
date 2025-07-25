@@ -28,8 +28,8 @@ export default function AdminSidebar({
             onLogout();
         } else {
             // Default logout behavior
-            localStorage.removeItem('authToken');
-            sessionStorage.removeItem('authToken');
+            localStorage.removeItem('sessionToken');
+            sessionStorage.removeItem('sessionToken');
             window.location.href = '/login';
         }
     };
