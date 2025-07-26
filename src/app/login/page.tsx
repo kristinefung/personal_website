@@ -3,17 +3,29 @@
 import Header from "@/component/customer/Header";
 import Login from "@/app/login/_components/Login";
 import Footer from "@/component/customer/Footer";
-import { authApiService } from "@/service/authApiService";
-import { useEffect } from "react";
+import { useAuthStore } from "@/store";
+import { useEffect, useRef } from "react";
 
 export default function LoginPage() {
-
+    const { isAuthenticated, isLoading: authLoading, checkAuth } = useAuthStore();
+    const hasCheckedAuth = useRef(false);
+    const hasRedirected = useRef(false);
 
     useEffect(() => {
-        if (typeof window !== 'undefined' && authApiService.isLoggedIn()) {
+        if (!hasCheckedAuth.current) {
+            hasCheckedAuth.current = true;
+            checkAuth();
+        }
+    }, []); // Only run once on mount
+
+    useEffect(() => {
+        // Only redirect if we're not loading, authenticated, and haven't redirected yet
+        if (!authLoading && isAuthenticated && !hasRedirected.current) {
+            console.log("Redirecting to dashboard - isAuthenticated:", isAuthenticated, "authLoading:", authLoading);
+            hasRedirected.current = true;
             window.location.href = '/dashboard';
         }
-    }, []);
+    }, [isAuthenticated, authLoading]);
 
     return (
         <>

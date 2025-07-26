@@ -2,6 +2,7 @@
 
 import React from "react";
 import { FaSignOutAlt, FaTachometerAlt, FaProjectDiagram, FaRocket, FaEnvelope, FaUser } from "react-icons/fa";
+import { useAuthStore } from "@/store";
 
 const adminNavLinks = [
     { name: "Dashboard", href: "/dashboard", icon: FaTachometerAlt },
@@ -23,14 +24,20 @@ export default function AdminSidebar({
     sidebarOpen = false,
     onToggleSidebar
 }: AdminSidebarProps) {
-    const handleLogout = () => {
+    const { logout, isLoading } = useAuthStore();
+
+    const handleLogout = async () => {
         if (onLogout) {
             onLogout();
         } else {
-            // Default logout behavior
-            localStorage.removeItem('sessionToken');
-            sessionStorage.removeItem('sessionToken');
-            window.location.href = '/login';
+            try {
+                await logout();
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Logout failed:', error);
+                // Force redirect even if logout fails
+                window.location.href = '/login';
+            }
         }
     };
 
@@ -77,10 +84,14 @@ export default function AdminSidebar({
                 <div className="px-4 pb-6 border-t border-gray-700 pt-4">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 w-full px-4 py-3 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 hover:text-red-300 transition-all duration-200 text-sm font-medium border border-red-600/30"
+                        disabled={isLoading}
+                        className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium border ${isLoading
+                            ? 'bg-gray-600/20 text-gray-400 border-gray-600/30 cursor-not-allowed'
+                            : 'bg-red-600/20 text-red-400 border-red-600/30 hover:bg-red-600/30 hover:text-red-300'
+                            }`}
                     >
                         <FaSignOutAlt className="text-lg flex-shrink-0" />
-                        Logout
+                        {isLoading ? 'Logging out...' : 'Logout'}
                     </button>
                 </div>
             </aside>

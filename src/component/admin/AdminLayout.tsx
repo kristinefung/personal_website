@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { authApiService } from "@/service/authApiService";
+import { useAuthStore } from "@/store";
 import AdminSidebar from "@/component/admin/Sidebar";
 import Header from "@/component/admin/Header";
 
@@ -13,45 +13,28 @@ interface AdminLayoutProps {
     userInitials?: string;
 }
 
-interface UserInfo {
-    id: number;
-    name: string;
-    email: string;
-}
-
 export default function AdminLayout({
     children,
     title = "Dashboard",
-    userName = "John Doe",
-    userRole = "Administrator",
-    userInitials = "JD"
 }: AdminLayoutProps) {
+    const { user, isLoading: authLoading, checkAuth, logout } = useAuthStore();
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [user, setUser] = useState<UserInfo | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        checkAuthentication();
+        const isAuthenticated = checkAuth();
+        if (!authLoading && !isAuthenticated) {
+            window.location.href = '/login';
+        }
     }, []);
 
-    const checkAuthentication = async () => {
+    const handleLogout = async () => {
         try {
-            const validation = await authApiService.validateLocalSession();
-
-            if (!validation.valid) {
-                // Redirect to login if session is invalid
-                window.location.href = '/login';
-                return;
-            }
-
-            // Fetch user info from API
-            const userInfo = await authApiService.getCurrentUser();
-            setUser(userInfo);
-        } catch (error) {
-            console.error('Authentication check failed:', error);
+            await logout();
             window.location.href = '/login';
-        } finally {
-            setIsLoading(false);
+        } catch (error) {
+            console.error('Logout failed:', error);
+            // Force redirect even if logout fails
+            window.location.href = '/login';
         }
     };
 
@@ -60,7 +43,7 @@ export default function AdminLayout({
     };
 
     // Show loading spinner while checking authentication
-    if (isLoading) {
+    if (authLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-[#0a1628]">
                 <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#7fffd4]"></div>
@@ -68,7 +51,6 @@ export default function AdminLayout({
         );
     }
 
-    // Only render the admin layout if user is authenticated
     if (!user) {
         return null; // This shouldn't happen as we redirect to login, but just in case
     }
@@ -78,6 +60,7 @@ export default function AdminLayout({
             <AdminSidebar
                 sidebarOpen={sidebarOpen}
                 onToggleSidebar={toggleSidebar}
+                onLogout={handleLogout}
             />
             <div className="flex-1 lg:ml-64">
                 <Header

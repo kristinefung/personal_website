@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { authApiService } from "@/service/authApiService";
+import { useAuthStore } from "@/store";
 import { LoginRequest } from "@/types/auth";
 import { loginFormSchema } from "@/lib/validation/schemas";
 import TextField from "@/component/form/TextField";
@@ -24,6 +24,7 @@ interface FormErrors {
 }
 
 export default function Login() {
+    const { login, isLoading, error } = useAuthStore();
     const [formData, setFormData] = useState<LoginFormData>({
         email: '',
         password: '',
@@ -92,28 +93,24 @@ export default function Login() {
                 password: formData.password,
             };
 
-            const response = await authApiService.login(loginData);
+            await login(loginData);
 
-            if (response.success) {
-                setStatus({
-                    isSubmitting: false,
-                    message: 'Login successful! Redirecting...',
-                    isError: false
-                });
+            setStatus({
+                isSubmitting: false,
+                message: 'Login successful! Redirecting...',
+                isError: false
+            });
 
-                // Reset form
-                setFormData({
-                    email: '',
-                    password: '',
-                });
+            // Reset form
+            setFormData({
+                email: '',
+                password: '',
+            });
 
-                // Redirect after a short delay
-                setTimeout(() => {
-                    window.location.href = '/dashboard';
-                }, 1500);
-            } else {
-                throw new Error(response.message || 'Login failed');
-            }
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 1500);
 
         } catch (error) {
             setStatus({
@@ -137,12 +134,12 @@ export default function Login() {
                 </p>
 
                 <form onSubmit={handleSubmit} autoComplete="on" noValidate className="bg-[#112240] rounded-lg p-8 w-full flex flex-col gap-6 shadow-lg">
-                    {status.message && (
-                        <div className={`p-4 rounded-lg text-center ${status.isError
+                    {(status.message || error) && (
+                        <div className={`p-4 rounded-lg text-center ${(status.isError || error)
                             ? 'bg-red-900/50 text-red-200 border border-red-700'
                             : 'bg-green-900/50 text-green-200 border border-green-700'
                             }`}>
-                            {status.message}
+                            {status.message || error}
                         </div>
                     )}
 
@@ -155,7 +152,7 @@ export default function Login() {
                         onChange={handleInputChange}
                         required
                         placeholder="Enter your email address"
-                        disabled={status.isSubmitting}
+                        disabled={isLoading}
                         label="Email Address"
                         error={errors.email}
                     />
@@ -167,7 +164,7 @@ export default function Login() {
                         onChange={handleInputChange}
                         required
                         placeholder="Enter your password"
-                        disabled={status.isSubmitting}
+                        disabled={isLoading}
                         label="Password"
                         error={errors.password}
                     />
@@ -175,13 +172,13 @@ export default function Login() {
                     <div className="flex flex-col gap-4">
                         <button
                             type="submit"
-                            disabled={status.isSubmitting}
-                            className={`px-6 py-3 bg-[#7fffd4] text-[#0a1628] rounded-lg font-medium text-lg transition-all duration-200 ${status.isSubmitting
+                            disabled={isLoading}
+                            className={`px-6 py-3 bg-[#7fffd4] text-[#0a1628] rounded-lg font-medium text-lg transition-all duration-200 ${isLoading
                                 ? 'opacity-50 cursor-not-allowed'
                                 : 'hover:bg-[#7fffd4] cursor-pointer'
                                 }`}
                         >
-                            {status.isSubmitting ? 'Signing In...' : 'Sign In'}
+                            {isLoading ? 'Signing In...' : 'Sign In'}
                         </button>
                     </div>
                 </form>
