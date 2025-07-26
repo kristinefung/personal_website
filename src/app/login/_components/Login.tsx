@@ -121,10 +121,6 @@ export default function Login() {
         }
     };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-
     return (
         <section className="py-24 px-8 md:px-16 bg-[#0a1628] w-full flex flex-col items-center justify-center min-h-screen">
             <div className="max-w-md w-full">
