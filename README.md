@@ -2,6 +2,10 @@
 
 A full-stack personal website built with [Next.js](https://nextjs.org), TypeScript, Prisma, and MySQL. This project features a modular architecture for managing profiles, projects, journeys, technologies, and enquiries, with authentication and an admin dashboard.
 
+## Demo
+
+Check out the live demo: [https://www.kristinefung.com](https://www.kristinefung.com)
+
 ## Features
 
 - **Next.js** app with TypeScript
@@ -13,10 +17,6 @@ A full-stack personal website built with [Next.js](https://nextjs.org), TypeScri
 - **Component-based UI** (React)
 - **Dockerized** for easy deployment
 - **Jest** for unit testing
-
-## Demo
-
-Check out the live demo: [https://kristinefung.com](https://kristinefung.com)
 
 ## Getting Started
 
