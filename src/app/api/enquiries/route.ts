@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { EnquiryRepository, CreateEnquiryData } from '@/lib/repositories/enquiryRepository';
 import { verifyAuthToken } from '@/lib/utils/auth';
-import { createEnquirySchema } from '@/lib/validation/schemas';
+import { contactFormSchema, formatZodErrors } from '@/lib/validation/schemas';
 
 const enquiryRepository = new EnquiryRepository();
 
@@ -9,16 +9,12 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
-        // Validate request body with Zod
-        const validationResult = createEnquirySchema.safeParse(body);
+        // Validate and transform request body with shared Zod schema
+        const validationResult = contactFormSchema.safeParse(body);
 
         if (!validationResult.success) {
-            const errorMessages = validationResult.error.issues.map((err: any) =>
-                `${err.path.join('.')}: ${err.message}`
-            ).join(', ');
-
             return NextResponse.json(
-                { error: `Validation failed: ${errorMessages}` },
+                { error: `Validation failed: ${formatZodErrors(validationResult.error)}` },
                 { status: 400 }
             );
         }
@@ -26,11 +22,11 @@ export async function POST(request: NextRequest) {
         const validatedData = validationResult.data;
 
         const enquiryData: CreateEnquiryData = {
-            name: validatedData.name.trim(),
-            email: validatedData.email?.trim() || undefined,
-            phone: validatedData.phone?.trim() || undefined,
-            subject: validatedData.subject.trim(),
-            message: validatedData.message.trim(),
+            name: validatedData.name,
+            email: validatedData.email,
+            phone: validatedData.phone,
+            subject: validatedData.subject,
+            message: validatedData.message,
         };
 
         const enquiry = await enquiryRepository.create(enquiryData);

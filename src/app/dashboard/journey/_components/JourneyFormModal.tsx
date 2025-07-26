@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "@/component/Modal";
 import JourneyFormFields from "./JourneyFormFields";
 import { JourneyResponse } from "@/types/api";
-import { journeyFormInputSchema } from "@/lib/validation/schemas";
+import { journeyFormSchema } from "@/lib/validation/schemas";
 
 interface JourneyFormModalProps {
     isOpen: boolean;
@@ -94,7 +94,7 @@ const JourneyFormModal: React.FC<JourneyFormModalProps> = ({
     };
 
     const validateForm = () => {
-        const validationResult = journeyFormInputSchema.safeParse(formData);
+        const validationResult = journeyFormSchema.safeParse(formData);
 
         if (!validationResult.success) {
             const newErrors: FormErrors = {};

@@ -1,38 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ProfileRepository, CreateProfileData } from '@/lib/repositories/profileRepository';
+import { verifyAuthToken } from '@/lib/utils/auth';
+import { profileFormSchema, formatZodErrors } from '@/lib/validation/schemas';
 
 const profileRepository = new ProfileRepository();
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
-        const { searchParams } = new URL(request.url);
-        const getFirst = searchParams.get('first') === 'true';
-        const includeDeleted = searchParams.get('includeDeleted') === 'true';
-        const createdBy = searchParams.get('createdBy');
-
-        if (getFirst) {
-            // Get the first/main profile
-            const profile = await profileRepository.findFirst();
-
-            if (!profile) {
-                return NextResponse.json(
-                    { error: 'No profile found' },
-                    { status: 404 }
-                );
-            }
-
-            return NextResponse.json(profile, { status: 200 });
-        } else {
-            // Get all profiles
-            const profiles = await profileRepository.findAll({
-                deleted: includeDeleted ? undefined : false,
-                createdBy: createdBy ? parseInt(createdBy) : undefined,
-            });
-
-            return NextResponse.json(profiles, { status: 200 });
+        const profile = await profileRepository.findFirst();
+        if (!profile) {
+            return NextResponse.json(
+                { error: 'Profile not found' },
+                { status: 404 }
+            );
         }
+        return NextResponse.json(profile);
     } catch (error) {
-        console.error('Error fetching profiles:', error);
+        console.error('Error fetching profile:', error);
         return NextResponse.json(
             { error: 'Internal server error. Please try again later.' },
             { status: 500 }
@@ -44,53 +28,24 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
-        // Validate required fields
-        const { bio } = body;
+        // Validate and transform request body with shared Zod schema
+        const validationResult = profileFormSchema.safeParse(body);
 
-        if (!bio || bio.trim().length === 0) {
+        if (!validationResult.success) {
             return NextResponse.json(
-                { error: 'Bio is required' },
+                { error: `Validation failed: ${formatZodErrors(validationResult.error)}` },
                 { status: 400 }
             );
         }
 
-        // Validate bio length (max 1000 characters as per schema)
-        if (bio.trim().length > 1000) {
-            return NextResponse.json(
-                { error: 'Bio cannot exceed 1000 characters' },
-                { status: 400 }
-            );
-        }
-
-        // Validate email format if provided
-        if (body.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
-            return NextResponse.json(
-                { error: 'Please provide a valid email address' },
-                { status: 400 }
-            );
-        }
-
-        // Validate URLs if provided
-        if (body.githubUrl && !isValidUrl(body.githubUrl)) {
-            return NextResponse.json(
-                { error: 'Please provide a valid GitHub URL' },
-                { status: 400 }
-            );
-        }
-
-        if (body.linkedinUrl && !isValidUrl(body.linkedinUrl)) {
-            return NextResponse.json(
-                { error: 'Please provide a valid LinkedIn URL' },
-                { status: 400 }
-            );
-        }
+        const validatedData = validationResult.data;
 
         const profileData: CreateProfileData = {
-            bio: bio.trim(),
-            profileImagePath: body.profileImagePath?.trim() || undefined,
-            email: body.email?.trim() || undefined,
-            githubUrl: body.githubUrl?.trim() || undefined,
-            linkedinUrl: body.linkedinUrl?.trim() || undefined,
+            bio: validatedData.bio,
+            profileImagePath: validatedData.profileImagePath,
+            email: validatedData.email,
+            githubUrl: validatedData.githubUrl,
+            linkedinUrl: validatedData.linkedinUrl,
             createdBy: body.createdBy || undefined,
         };
 
@@ -109,15 +64,5 @@ export async function POST(request: NextRequest) {
             { error: 'Internal server error. Please try again later.' },
             { status: 500 }
         );
-    }
-}
-
-// Helper function to validate URLs
-function isValidUrl(url: string): boolean {
-    try {
-        new URL(url);
-        return true;
-    } catch {
-        return false;
     }
 } 

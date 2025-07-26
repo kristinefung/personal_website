@@ -2,15 +2,7 @@ import React from "react";
 import TextField from "@/component/form/TextField";
 import TextArea from "@/component/form/TextArea";
 import Checkbox from "@/component/form/Checkbox";
-
-interface FormData {
-    title: string;
-    institution: string;
-    description: string;
-    startYear: string;
-    endYear: string;
-    isCurrent: boolean;
-}
+import { JourneyFormData } from "@/lib/validation/schemas";
 
 interface FormErrors {
     title?: string;
@@ -22,7 +14,7 @@ interface FormErrors {
 }
 
 interface JourneyFormFieldsProps {
-    formData: FormData;
+    formData: JourneyFormData;
     errors: FormErrors;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
     isSubmitting: boolean;

@@ -1,27 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { JourneyRepository } from '@/lib/repositories/journeyRepository';
 import { verifyAuthToken } from '@/lib/utils/auth';
+import { journeyFormSchema, formatZodErrors } from '@/lib/validation/schemas';
 
 const journeyRepository = new JourneyRepository();
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
-        const { searchParams } = new URL(request.url);
-        const includeDeleted = searchParams.get('includeDeleted') === 'true';
-        const createdBy = searchParams.get('createdBy');
-        const isCurrent = searchParams.get('isCurrent');
-        const startYear = searchParams.get('startYear');
-        const endYear = searchParams.get('endYear');
-
-        const journeys = await journeyRepository.findAll({
-            deleted: includeDeleted ? undefined : false,
-            createdBy: createdBy ? parseInt(createdBy) : undefined,
-            isCurrent: isCurrent === 'true' ? true : isCurrent === 'false' ? false : undefined,
-            startYear: startYear ? parseInt(startYear) : undefined,
-            endYear: endYear ? parseInt(endYear) : undefined,
-        });
-
-        return NextResponse.json(journeys, { status: 200 });
+        const journeys = await journeyRepository.findAll();
+        return NextResponse.json(journeys);
     } catch (error) {
         console.error('Error fetching journeys:', error);
         return NextResponse.json(
@@ -41,25 +28,27 @@ export async function POST(request: NextRequest) {
                 { status: 401 }
             );
         }
-        const body = await request.json();
-        const { title, institution, description, startYear, endYear, isCurrent } = body;
 
-        // Validate required fields
-        if (!title || !institution || !startYear) {
+        const body = await request.json();
+
+        // Validate form data using the same schema as frontend
+        const validationResult = journeyFormSchema.safeParse(body);
+
+        if (!validationResult.success) {
             return NextResponse.json(
-                { error: 'Title, institution, and startYear are required' },
+                { error: `Validation failed: ${formatZodErrors(validationResult.error)}` },
                 { status: 400 }
             );
         }
 
         // Prepare create data
         const createData = {
-            title: title.trim(),
-            institution: institution.trim(),
-            description: description?.trim() || '',
-            startYear: parseInt(startYear, 10),
-            endYear: isCurrent ? undefined : (endYear ? parseInt(endYear, 10) : undefined),
-            isCurrent: !!isCurrent,
+            title: validationResult.data.title,
+            institution: validationResult.data.institution,
+            description: validationResult.data.description,
+            startYear: parseInt(validationResult.data.startYear, 10),
+            endYear: validationResult.data.endYear ? parseInt(validationResult.data.endYear, 10) : undefined,
+            isCurrent: validationResult.data.isCurrent,
             createdBy: authResult.userId,
         };
 
