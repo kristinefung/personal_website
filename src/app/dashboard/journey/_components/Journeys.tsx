@@ -1,41 +1,36 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { journeyApi } from "@/service/journeyService";
-import { JourneyResponse } from "@/types/api";
+import { useJourneyStore } from "@/store";
 import Table from "@/component/admin/Table";
 import JourneyFormModal from "./JourneyFormModal";
 import DeleteJourneyModal from "./DeleteJourneyModal";
 
 export default function Journeys() {
-    const [journeys, setJourneys] = useState<JourneyResponse[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    // Modal state placeholders
+    const {
+        journeys,
+        isLoading: loading,
+        error,
+        selectedJourney,
+        fetchJourneys,
+        addJourney: createJourney,
+        updateJourney,
+        deleteJourney,
+        setSelectedJourney
+    } = useJourneyStore();
+
+    // Modal state
     const [addModalOpen, setAddModalOpen] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [selectedJourney, setSelectedJourney] = useState<JourneyResponse | null>(null);
-    const [journeyToDelete, setJourneyToDelete] = useState<JourneyResponse | null>(null);
+    const [journeyToDelete, setJourneyToDelete] = useState<number | null>(null);
 
     useEffect(() => {
         fetchJourneys();
-    }, []);
-
-    const fetchJourneys = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const journeyData = await journeyApi.getAllJourneys();
-            setJourneys(journeyData);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load journeys');
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [fetchJourneys]);
 
     const handleAddJourney = () => setAddModalOpen(true);
+
     const handleEditJourney = (id: number) => {
         const journey = journeys.find(j => j.id === id);
         if (journey) {
@@ -43,19 +38,19 @@ export default function Journeys() {
             setEditModalOpen(true);
         }
     };
+
     const handleDeleteJourney = (id: number) => {
-        const journey = journeys.find(j => j.id === id);
-        if (journey) {
-            setJourneyToDelete(journey);
-            setDeleteModalOpen(true);
-        }
+        setJourneyToDelete(id);
+        setDeleteModalOpen(true);
     };
-    // Placeholder handlers for modals
+
     const handleCloseAddModal = () => setAddModalOpen(false);
+
     const handleCloseEditModal = () => {
         setEditModalOpen(false);
         setSelectedJourney(null);
     };
+
     const handleCloseDeleteModal = () => {
         setDeleteModalOpen(false);
         setJourneyToDelete(null);
@@ -64,9 +59,8 @@ export default function Journeys() {
     const handleSaveJourney = async (journeyData: any) => {
         if (!selectedJourney) return;
         try {
-            // Call the API to update the journey (assume journeyApi.updateJourney exists)
-            const updatedJourney = await journeyApi.updateJourney(selectedJourney.id, journeyData);
-            setJourneys(prev => prev.map(j => j.id === selectedJourney.id ? updatedJourney : j));
+            await updateJourney(selectedJourney.id, journeyData);
+            handleCloseEditModal();
         } catch (error) {
             alert(error instanceof Error ? error.message : 'Failed to update journey');
         }
@@ -74,19 +68,8 @@ export default function Journeys() {
 
     const handleCreateJourney = async (journeyData: any) => {
         try {
-            // Get token from localStorage or cookie (adjust as needed)
-            const token = localStorage.getItem('sessionToken');
-            const response = await fetch('/api/journeys', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : '',
-                },
-                body: JSON.stringify(journeyData),
-            });
-            const newJourney = await response.json();
-            if (!response.ok) throw new Error(newJourney.error || 'Failed to create journey');
-            setJourneys(prev => [newJourney, ...prev]);
+            await createJourney(journeyData);
+            handleCloseAddModal();
         } catch (error) {
             alert(error instanceof Error ? error.message : 'Failed to create journey');
         }
@@ -95,21 +78,10 @@ export default function Journeys() {
     const handleConfirmDelete = async () => {
         if (!journeyToDelete) return;
         try {
-            const token = localStorage.getItem('sessionToken');
-            const response = await fetch(`/api/journeys/${journeyToDelete.id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': token ? `Bearer ${token}` : '',
-                },
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Failed to delete journey');
-            setJourneys(prev => prev.filter(j => j.id !== journeyToDelete.id));
+            await deleteJourney(journeyToDelete);
+            handleCloseDeleteModal();
         } catch (error) {
             alert(error instanceof Error ? error.message : 'Failed to delete journey');
-        } finally {
-            setDeleteModalOpen(false);
-            setJourneyToDelete(null);
         }
     };
 
@@ -198,7 +170,7 @@ export default function Journeys() {
                     isOpen={deleteModalOpen}
                     onClose={handleCloseDeleteModal}
                     onConfirm={handleConfirmDelete}
-                    journeyTitle={journeyToDelete?.title || ''}
+                    journeyTitle={journeys.find(j => j.id === journeyToDelete)?.title || ''}
                 />
             </div>
         </div>
