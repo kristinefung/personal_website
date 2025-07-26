@@ -14,6 +14,10 @@ A full-stack personal website built with [Next.js](https://nextjs.org), TypeScri
 - **Dockerized** for easy deployment
 - **Jest** for unit testing
 
+## Demo
+
+Check out the live demo: [https://kristinefung.com](https://kristinefung.com)
+
 ## Getting Started
 
 ### Prerequisites
