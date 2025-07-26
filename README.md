@@ -26,7 +26,7 @@ A full-stack personal website built with [Next.js](https://nextjs.org), TypeScri
 
 1. **Clone the repository:**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/kristinefung/personal_website.git
    cd personal_website
    ```
 
