@@ -2,39 +2,57 @@ import React from "react";
 import TextField from "@/component/form/TextField";
 import TextArea from "@/component/form/TextArea";
 
+interface FormData {
+    name: string;
+    description: string;
+    technologies: string;
+    githubUrl: string;
+    projectUrl: string;
+    imagePath: string;
+}
+
+interface FormErrors {
+    name?: string;
+    description?: string;
+    technologies?: string;
+    githubUrl?: string;
+    projectUrl?: string;
+    imagePath?: string;
+}
+
 interface ProjectFormFieldsProps {
-    formData: {
-        name: string;
-        description: string;
-        technologies: string;
-        githubUrl: string;
-        projectUrl: string;
-        imagePath: string;
-    };
-    previewImageUrl: string | null;
+    formData: FormData;
+    errors: FormErrors;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+    previewImageUrl: string | null;
     handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     selectedImageFile?: File | null;
     projectImagePath?: string;
+    isSubmitting: boolean;
 }
 
 const ProjectFormFields: React.FC<ProjectFormFieldsProps> = ({
     formData,
-    previewImageUrl,
+    errors,
     handleInputChange,
+    previewImageUrl,
     handleFileChange,
     selectedImageFile,
     projectImagePath,
+    isSubmitting,
 }) => (
     <>
         {/* Project Image */}
         <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Project Image</label>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
+            <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                disabled={isSubmitting}
+            />
             {previewImageUrl ? (
                 <img src={previewImageUrl} alt="Preview" className="mt-2 w-full h-40 object-cover rounded-lg border" />
-            ) : formData.imagePath ? (
-                <img src={`/api/images/${formData.imagePath}`} alt="Current" className="mt-2 w-full h-40 object-cover rounded-lg border" />
             ) : projectImagePath ? (
                 <img src={`/api/images/${projectImagePath}`} alt="Current" className="mt-2 w-full h-40 object-cover rounded-lg border" />
             ) : null}
@@ -48,9 +66,11 @@ const ProjectFormFields: React.FC<ProjectFormFieldsProps> = ({
                 name="name"
                 label="Project Title"
                 required
+                placeholder="Enter project name"
                 value={formData.name}
                 onChange={handleInputChange}
-                placeholder="Enter project name"
+                disabled={isSubmitting}
+                error={errors.name}
             />
         </div>
         {/* Description */}
@@ -59,11 +79,12 @@ const ProjectFormFields: React.FC<ProjectFormFieldsProps> = ({
                 cssStyle="ADMIN"
                 id="description"
                 name="description"
+                label="Description"
+                placeholder="Enter project description"
                 value={formData.description}
                 onChange={handleInputChange}
-                label="Description"
-                required
-                placeholder="Enter project description"
+                disabled={isSubmitting}
+                error={errors.description}
             />
         </div>
         {/* Technologies */}
@@ -75,9 +96,11 @@ const ProjectFormFields: React.FC<ProjectFormFieldsProps> = ({
                 name="technologies"
                 label="Technologies"
                 required
+                placeholder="React, Node.js, MongoDB"
                 value={formData.technologies}
                 onChange={handleInputChange}
-                placeholder="React, Node.js, MongoDB"
+                disabled={isSubmitting}
+                error={errors.technologies}
             />
         </div>
         {/* GitHub URL */}
@@ -88,10 +111,11 @@ const ProjectFormFields: React.FC<ProjectFormFieldsProps> = ({
                 id="githubUrl"
                 name="githubUrl"
                 label="GitHub URL"
-                required
+                placeholder="https://github.com/username/project"
                 value={formData.githubUrl}
                 onChange={handleInputChange}
-                placeholder="https://github.com/username/project"
+                disabled={isSubmitting}
+                error={errors.githubUrl}
             />
         </div>
         {/* Live Demo URL */}
@@ -102,10 +126,11 @@ const ProjectFormFields: React.FC<ProjectFormFieldsProps> = ({
                 id="projectUrl"
                 name="projectUrl"
                 label="Live Demo URL"
-                required
+                placeholder="https://project-demo.com"
                 value={formData.projectUrl}
                 onChange={handleInputChange}
-                placeholder="https://project-demo.com"
+                disabled={isSubmitting}
+                error={errors.projectUrl}
             />
         </div>
     </>

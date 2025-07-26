@@ -1,15 +1,15 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { authApiService } from "@/service/authApiService";
 import { LoginRequest } from "@/types/auth";
+import { loginFormSchema } from "@/lib/validation/schemas";
 import TextField from "@/component/form/TextField";
 import PasswordTextField from "@/component/form/PasswordTextField";
 
 interface LoginFormData {
     email: string;
     password: string;
-    rememberMe: boolean;
 }
 
 interface LoginStatus {
@@ -18,11 +18,15 @@ interface LoginStatus {
     isError: boolean;
 }
 
+interface FormErrors {
+    email?: string;
+    password?: string;
+}
+
 export default function Login() {
     const [formData, setFormData] = useState<LoginFormData>({
         email: '',
         password: '',
-        rememberMe: false
     });
 
     const [status, setStatus] = useState<LoginStatus>({
@@ -31,6 +35,7 @@ export default function Login() {
         isError: false
     });
 
+    const [errors, setErrors] = useState<FormErrors>({});
     const [showPassword, setShowPassword] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,28 +44,39 @@ export default function Login() {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+
+        // Clear error for this field when user starts typing
+        if (errors[name as keyof FormErrors]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: undefined
+            }));
+        }
+    };
+
+    const validateForm = () => {
+        const validationResult = loginFormSchema.safeParse(formData);
+
+        if (!validationResult.success) {
+            const newErrors: FormErrors = {};
+            validationResult.error.issues.forEach((issue) => {
+                const fieldName = issue.path[0] as keyof FormErrors;
+                if (fieldName) {
+                    newErrors[fieldName] = issue.message;
+                }
+            });
+            setErrors(newErrors);
+            return false;
+        }
+
+        setErrors({});
+        return true;
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!formData.email.trim() || !formData.password.trim()) {
-            setStatus({
-                isSubmitting: false,
-                message: 'Please fill in all required fields',
-                isError: true
-            });
-            return;
-        }
-
-        // Basic email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email.trim())) {
-            setStatus({
-                isSubmitting: false,
-                message: 'Please enter a valid email address',
-                isError: true
-            });
+        if (!validateForm()) {
             return;
         }
 
@@ -74,7 +90,6 @@ export default function Login() {
             const loginData: LoginRequest = {
                 email: formData.email.trim(),
                 password: formData.password,
-                rememberMe: formData.rememberMe
             };
 
             const response = await authApiService.login(loginData);
@@ -90,7 +105,6 @@ export default function Login() {
                 setFormData({
                     email: '',
                     password: '',
-                    rememberMe: false
                 });
 
                 // Redirect after a short delay
@@ -143,6 +157,7 @@ export default function Login() {
                         placeholder="Enter your email address"
                         disabled={status.isSubmitting}
                         label="Email Address"
+                        error={errors.email}
                     />
                     <PasswordTextField
                         cssStyle="CUSTOMER"
@@ -154,6 +169,7 @@ export default function Login() {
                         placeholder="Enter your password"
                         disabled={status.isSubmitting}
                         label="Password"
+                        error={errors.password}
                     />
 
                     <div className="flex flex-col gap-4">

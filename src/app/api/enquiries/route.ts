@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { EnquiryRepository, CreateEnquiryData } from '@/lib/repositories/enquiryRepository';
 import { verifyAuthToken } from '@/lib/utils/auth';
+import { createEnquirySchema } from '@/lib/validation/schemas';
 
 const enquiryRepository = new EnquiryRepository();
 
@@ -8,30 +9,28 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
-        // Validate required fields
-        const { name, subject, message } = body;
+        // Validate request body with Zod
+        const validationResult = createEnquirySchema.safeParse(body);
 
-        if (!name || !subject || !message) {
+        if (!validationResult.success) {
+            const errorMessages = validationResult.error.issues.map((err: any) =>
+                `${err.path.join('.')}: ${err.message}`
+            ).join(', ');
+
             return NextResponse.json(
-                { error: 'Name, subject, and message are required fields' },
+                { error: `Validation failed: ${errorMessages}` },
                 { status: 400 }
             );
         }
 
-        // Validate email format if provided
-        if (body.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
-            return NextResponse.json(
-                { error: 'Please provide a valid email address' },
-                { status: 400 }
-            );
-        }
+        const validatedData = validationResult.data;
 
         const enquiryData: CreateEnquiryData = {
-            name: name.trim(),
-            email: body.email?.trim() || undefined,
-            phone: body.phone?.trim() || undefined,
-            subject: subject.trim(),
-            message: message.trim(),
+            name: validatedData.name.trim(),
+            email: validatedData.email?.trim() || undefined,
+            phone: validatedData.phone?.trim() || undefined,
+            subject: validatedData.subject.trim(),
+            message: validatedData.message.trim(),
         };
 
         const enquiry = await enquiryRepository.create(enquiryData);

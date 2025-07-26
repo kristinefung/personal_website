@@ -4,8 +4,10 @@ import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 import { enquiryApi } from "@/service/enquiryService";
 import { profileApi } from "@/service/profileService";
 import { CreateEnquiryRequest, ProfileResponse } from "@/types/api";
+import { contactFormSchema } from "@/lib/validation/schemas";
 import TextField from "@/component/form/TextField";
 import TextArea from "@/component/form/TextArea";
+
 interface FormData {
     name: string;
     email: string;
@@ -18,6 +20,14 @@ interface FormStatus {
     isSubmitting: boolean;
     message: string;
     isError: boolean;
+}
+
+interface FormErrors {
+    name?: string;
+    email?: string;
+    phone?: string;
+    subject?: string;
+    message?: string;
 }
 
 export default function Contact() {
@@ -35,6 +45,7 @@ export default function Contact() {
         isError: false
     });
 
+    const [errors, setErrors] = useState<FormErrors>({});
     const [profile, setProfile] = useState<ProfileResponse | null>(null);
     const [profileLoading, setProfileLoading] = useState(true);
 
@@ -61,17 +72,39 @@ export default function Contact() {
             ...prev,
             [name]: value
         }));
+
+        // Clear error for this field when user starts typing
+        if (errors[name as keyof FormErrors]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: undefined
+            }));
+        }
+    };
+
+    const validateForm = () => {
+        const validationResult = contactFormSchema.safeParse(formData);
+
+        if (!validationResult.success) {
+            const newErrors: FormErrors = {};
+            validationResult.error.issues.forEach((issue) => {
+                const fieldName = issue.path[0] as keyof FormErrors;
+                if (fieldName) {
+                    newErrors[fieldName] = issue.message;
+                }
+            });
+            setErrors(newErrors);
+            return false;
+        }
+
+        setErrors({});
+        return true;
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!formData.name.trim() || !formData.subject.trim() || !formData.message.trim()) {
-            setStatus({
-                isSubmitting: false,
-                message: 'Please fill in all required fields (Name, Subject, and Message)',
-                isError: true
-            });
+        if (!validateForm()) {
             return;
         }
 
@@ -142,6 +175,7 @@ export default function Contact() {
                             value={formData.email}
                             onChange={handleInputChange}
                             disabled={status.isSubmitting}
+                            error={errors.email}
                         />
                     </div>
                     <div className="flex-1">
@@ -154,6 +188,7 @@ export default function Contact() {
                             value={formData.phone}
                             onChange={handleInputChange}
                             disabled={status.isSubmitting}
+                            error={errors.phone}
                         />
                     </div>
                 </div>
@@ -168,6 +203,7 @@ export default function Contact() {
                         value={formData.name}
                         onChange={handleInputChange}
                         disabled={status.isSubmitting}
+                        error={errors.name}
                     />
                 </div>
                 <div>
@@ -181,6 +217,7 @@ export default function Contact() {
                         value={formData.subject}
                         onChange={handleInputChange}
                         disabled={status.isSubmitting}
+                        error={errors.subject}
                     />
                 </div>
                 <div>
@@ -193,6 +230,7 @@ export default function Contact() {
                         required
                         onChange={handleInputChange}
                         disabled={status.isSubmitting}
+                        error={errors.message}
                     />
                 </div>
                 <div className="flex justify-center mt-4">

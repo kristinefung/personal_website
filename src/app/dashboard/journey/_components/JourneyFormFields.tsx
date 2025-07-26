@@ -3,19 +3,37 @@ import TextField from "@/component/form/TextField";
 import TextArea from "@/component/form/TextArea";
 import Checkbox from "@/component/form/Checkbox";
 
-interface JourneyFormFieldsProps {
-    formData: {
-        title: string;
-        institution: string;
-        description: string;
-        startYear: string;
-        endYear: string;
-        isCurrent: boolean;
-    };
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+interface FormData {
+    title: string;
+    institution: string;
+    description: string;
+    startYear: string;
+    endYear: string;
+    isCurrent: boolean;
 }
 
-const JourneyFormFields: React.FC<JourneyFormFieldsProps> = ({ formData, handleInputChange }) => (
+interface FormErrors {
+    title?: string;
+    institution?: string;
+    description?: string;
+    startYear?: string;
+    endYear?: string;
+    isCurrent?: string;
+}
+
+interface JourneyFormFieldsProps {
+    formData: FormData;
+    errors: FormErrors;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+    isSubmitting: boolean;
+}
+
+const JourneyFormFields: React.FC<JourneyFormFieldsProps> = ({
+    formData,
+    errors,
+    handleInputChange,
+    isSubmitting
+}) => (
     <>
         <div>
             <TextField
@@ -23,10 +41,12 @@ const JourneyFormFields: React.FC<JourneyFormFieldsProps> = ({ formData, handleI
                 type="text"
                 id="title"
                 name="title"
-                value={formData.title}
-                onChange={handleInputChange}
                 label="Title"
                 required
+                value={formData.title}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+                error={errors.title}
             />
         </div>
         <div>
@@ -35,10 +55,12 @@ const JourneyFormFields: React.FC<JourneyFormFieldsProps> = ({ formData, handleI
                 type="text"
                 id="institution"
                 name="institution"
-                value={formData.institution}
-                onChange={handleInputChange}
                 label="Institution"
                 required
+                value={formData.institution}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+                error={errors.institution}
             />
         </div>
         <div>
@@ -46,10 +68,12 @@ const JourneyFormFields: React.FC<JourneyFormFieldsProps> = ({ formData, handleI
                 cssStyle="ADMIN"
                 id="description"
                 name="description"
-                value={formData.description}
-                onChange={handleInputChange}
                 label="Description"
                 rows={3}
+                value={formData.description}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+                error={errors.description}
             />
         </div>
         <div>
@@ -58,10 +82,12 @@ const JourneyFormFields: React.FC<JourneyFormFieldsProps> = ({ formData, handleI
                 type="number"
                 id="startYear"
                 name="startYear"
-                value={formData.startYear}
-                onChange={handleInputChange}
                 label="Start Year"
                 required
+                value={formData.startYear}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+                error={errors.startYear}
             />
         </div>
         <div>
@@ -70,10 +96,11 @@ const JourneyFormFields: React.FC<JourneyFormFieldsProps> = ({ formData, handleI
                 type="number"
                 id="endYear"
                 name="endYear"
+                label="End Year"
                 value={formData.endYear}
                 onChange={handleInputChange}
-                label="End Year"
-                disabled={formData.isCurrent}
+                disabled={formData.isCurrent || isSubmitting}
+                error={errors.endYear}
             />
         </div>
         <div className="flex items-center">
@@ -81,9 +108,11 @@ const JourneyFormFields: React.FC<JourneyFormFieldsProps> = ({ formData, handleI
                 cssStyle="ADMIN"
                 id="isCurrent"
                 name="isCurrent"
+                label="Currently here"
                 checked={formData.isCurrent}
                 onChange={handleInputChange}
-                label="Currently here"
+                disabled={isSubmitting}
+                error={errors.isCurrent}
             />
         </div>
     </>

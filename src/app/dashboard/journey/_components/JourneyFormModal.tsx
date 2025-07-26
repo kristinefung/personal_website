@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "@/component/Modal";
 import JourneyFormFields from "./JourneyFormFields";
 import { JourneyResponse } from "@/types/api";
+import { journeyFormInputSchema } from "@/lib/validation/schemas";
 
 interface JourneyFormModalProps {
     isOpen: boolean;
@@ -11,7 +12,25 @@ interface JourneyFormModalProps {
     journey?: JourneyResponse | null;
 }
 
-const emptyForm = {
+interface FormData {
+    title: string;
+    institution: string;
+    description: string;
+    startYear: string;
+    endYear: string;
+    isCurrent: boolean;
+}
+
+interface FormErrors {
+    title?: string;
+    institution?: string;
+    description?: string;
+    startYear?: string;
+    endYear?: string;
+    isCurrent?: string;
+}
+
+const emptyForm: FormData = {
     title: "",
     institution: "",
     description: "",
@@ -27,7 +46,9 @@ const JourneyFormModal: React.FC<JourneyFormModalProps> = ({
     mode,
     journey,
 }) => {
-    const [formData, setFormData] = useState(emptyForm);
+    const [formData, setFormData] = useState<FormData>(emptyForm);
+    const [errors, setErrors] = useState<FormErrors>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (mode === "EDIT" && journey) {
@@ -42,14 +63,19 @@ const JourneyFormModal: React.FC<JourneyFormModalProps> = ({
         } else if (mode === "ADD") {
             setFormData(emptyForm);
         }
+        setErrors({});
     }, [isOpen, mode, journey]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
+
         if (type === "checkbox") {
+            const checked = (e.target as HTMLInputElement).checked;
             setFormData(prev => ({
                 ...prev,
-                [name]: (e.target as HTMLInputElement).checked
+                [name]: checked,
+                // Clear end year when isCurrent is checked
+                ...(name === "isCurrent" && checked ? { endYear: "" } : {})
             }));
         } else {
             setFormData(prev => ({
@@ -57,18 +83,58 @@ const JourneyFormModal: React.FC<JourneyFormModalProps> = ({
                 [name]: value
             }));
         }
+
+        // Clear error for this field when user starts typing
+        if (errors[name as keyof FormErrors]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: undefined
+            }));
+        }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const validateForm = () => {
+        const validationResult = journeyFormInputSchema.safeParse(formData);
+
+        if (!validationResult.success) {
+            const newErrors: FormErrors = {};
+            validationResult.error.issues.forEach((issue) => {
+                const fieldName = issue.path[0] as keyof FormErrors;
+                if (fieldName) {
+                    newErrors[fieldName] = issue.message;
+                }
+            });
+            setErrors(newErrors);
+            return false;
+        }
+
+        setErrors({});
+        return true;
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const data = {
-            ...formData,
-            startYear: formData.startYear ? parseInt(formData.startYear, 10) : undefined,
-            endYear: formData.isCurrent ? undefined : (formData.endYear ? parseInt(formData.endYear, 10) : undefined),
-            isCurrent: !!formData.isCurrent,
-        };
-        onSave(data);
-        onClose();
+
+        if (!validateForm()) {
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const data = {
+                ...formData,
+                startYear: formData.startYear ? parseInt(formData.startYear, 10) : undefined,
+                endYear: formData.isCurrent ? undefined : (formData.endYear ? parseInt(formData.endYear, 10) : undefined),
+                isCurrent: !!formData.isCurrent,
+            };
+            onSave(data);
+            onClose();
+        } catch (error) {
+            console.error('Error saving journey:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleCancel = () => {
@@ -79,24 +145,28 @@ const JourneyFormModal: React.FC<JourneyFormModalProps> = ({
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title={mode === "ADD" ? "Add Journey" : "Edit Journey"}>
-            <form autoComplete="off" onSubmit={handleSubmit} className="space-y-4">
+            <form autoComplete="off" onSubmit={handleSubmit} noValidate className="space-y-4">
                 <JourneyFormFields
                     formData={formData}
+                    errors={errors}
                     handleInputChange={handleInputChange}
+                    isSubmitting={isSubmitting}
                 />
                 <div className="flex justify-end gap-3 pt-4">
                     <button
                         type="button"
                         onClick={handleCancel}
-                        className="px-4 py-2 bg-teal-400 text-white rounded-lg hover:bg-teal-500 transition-colors cursor-pointer"
+                        disabled={isSubmitting}
+                        className="px-4 py-2 bg-teal-400 text-white rounded-lg hover:bg-teal-500 transition-colors cursor-pointer disabled:opacity-50"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
-                        className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors cursor-pointer"
+                        disabled={isSubmitting}
+                        className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors cursor-pointer disabled:opacity-50"
                     >
-                        {mode === "ADD" ? "Create Journey" : "Save Journey"}
+                        {isSubmitting ? 'Saving...' : (mode === "ADD" ? "Create Journey" : "Save Journey")}
                     </button>
                 </div>
             </form>
