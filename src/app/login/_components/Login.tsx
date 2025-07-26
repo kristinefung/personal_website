@@ -134,14 +134,6 @@ export default function Login() {
                 </p>
 
                 <form onSubmit={handleSubmit} autoComplete="on" noValidate className="bg-[#112240] rounded-lg p-8 w-full flex flex-col gap-6 shadow-lg">
-                    {(status.message || error) && (
-                        <div className={`p-4 rounded-lg text-center ${(status.isError || error)
-                            ? 'bg-red-900/50 text-red-200 border border-red-700'
-                            : 'bg-green-900/50 text-green-200 border border-green-700'
-                            }`}>
-                            {status.message || error}
-                        </div>
-                    )}
 
                     <TextField
                         cssStyle="CUSTOMER"
@@ -181,6 +173,14 @@ export default function Login() {
                             {isLoading ? 'Signing In...' : 'Sign In'}
                         </button>
                     </div>
+                    {(status.message || error) && (
+                        <div className={`p-4 rounded-lg text-center ${(status.isError || error)
+                            ? 'bg-red-900/50 text-red-200 border border-red-700'
+                            : 'bg-green-900/50 text-green-200 border border-green-700'
+                            }`}>
+                            {status.message || error}
+                        </div>
+                    )}
                 </form>
 
             </div>

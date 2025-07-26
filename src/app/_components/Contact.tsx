@@ -155,14 +155,6 @@ export default function Contact() {
                 Whether you have a question or just want to say hi, I'll do my best to get back to you!
             </p>
             <form onSubmit={handleSubmit} autoComplete="off" noValidate className="bg-[#0a1628] rounded-lg p-8 w-full max-w-2xl flex flex-col gap-6 shadow-lg">
-                {status.message && (
-                    <div className={`p-4 rounded-lg text-center ${status.isError
-                        ? 'bg-red-900/50 text-red-200 border border-red-700'
-                        : 'bg-green-900/50 text-green-200 border border-green-700'
-                        }`}>
-                        {status.message}
-                    </div>
-                )}
 
                 <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex-1">
@@ -245,6 +237,15 @@ export default function Contact() {
                         {status.isSubmitting ? 'Sending...' : 'Send Message'}
                     </button>
                 </div>
+                {status.message && (
+                    <div className={`p-4 rounded-lg text-center ${status.isError
+                        ? 'bg-red-900/50 text-red-200 border border-red-700'
+                        : 'bg-green-900/50 text-green-200 border border-green-700'
+                        }`}>
+                        {status.message}
+                    </div>
+                )}
+
             </form>
             <div className="mt-10 flex flex-col items-center">
                 <p className="text-gray-400 mb-4 text-lg">Or reach out directly:</p>
