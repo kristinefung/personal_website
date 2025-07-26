@@ -1,39 +1,32 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { projectApi } from "@/service/projectService";
-import { ProjectResponse } from "@/types/api";
+import { useProjectStore } from "@/store";
 import ProjectFormModal from "@/app/dashboard/project/_components/ProjectFormModal";
 import DeleteProjectModal from "@/app/dashboard/project/_components/DeleteProjectModal";
 import Table from "@/component/admin/Table";
 
 export default function Projects() {
-    const [projects, setProjects] = useState<ProjectResponse[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const {
+        projects,
+        isLoading: loading,
+        error,
+        selectedProject,
+        fetchProjects,
+        addProject: createProject,
+        updateProject,
+        deleteProject,
+        setSelectedProject
+    } = useProjectStore();
+
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [addModalOpen, setAddModalOpen] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [selectedProject, setSelectedProject] = useState<ProjectResponse | null>(null);
-    const [projectToDelete, setProjectToDelete] = useState<ProjectResponse | null>(null);
+    const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
 
     useEffect(() => {
         fetchProjects();
-    }, []);
-
-    const fetchProjects = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const projectData = await projectApi.getAllProjects();
-            setProjects(projectData);
-        } catch (err) {
-            console.error('Error fetching projects:', err);
-            setError(err instanceof Error ? err.message : 'Failed to load projects');
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [fetchProjects]);
 
     const handleAddProject = () => {
         setAddModalOpen(true);
@@ -41,26 +34,9 @@ export default function Projects() {
 
     const handleCreateProject = async (projectData: any) => {
         try {
-            // Prepare the create data
-            const createData = {
-                name: projectData.name,
-                description: projectData.description,
-                githubUrl: projectData.githubUrl,
-                projectUrl: projectData.projectUrl,
-                technologies: projectData.technologies,
-                imagePath: projectData.imagePath,
-            };
-
-            // Call the API to create the project
-            const newProject = await projectApi.createProject(createData);
-
-            // Add the new project to the list
-            setProjects(prevProjects => [newProject, ...prevProjects]);
-
-            console.log("Project created successfully:", newProject);
+            await createProject(projectData);
+            handleCloseAddModal();
         } catch (error) {
-            console.error("Error creating project:", error);
-            // TODO: Show error message to user
             alert(error instanceof Error ? error.message : 'Failed to create project');
         }
     };
@@ -74,34 +50,18 @@ export default function Projects() {
     };
 
     const handleDeleteProject = (projectId: number) => {
-        const project = projects.find(p => p.id === projectId);
-        if (project) {
-            setProjectToDelete(project);
-            setDeleteModalOpen(true);
-        }
+        setProjectToDelete(projectId);
+        setDeleteModalOpen(true);
     };
 
     const handleConfirmDelete = async () => {
         if (!projectToDelete) return;
 
         try {
-            // Call the API to delete the project
-            await projectApi.deleteProject(projectToDelete.id);
-
-            // Remove the project from the list
-            setProjects(prevProjects =>
-                prevProjects.filter(project => project.id !== projectToDelete.id)
-            );
-
-            console.log("Project deleted successfully:", projectToDelete.name);
+            await deleteProject(projectToDelete);
+            handleCloseDeleteModal();
         } catch (error) {
-            console.error("Error deleting project:", error);
-            // TODO: Show error message to user
             alert(error instanceof Error ? error.message : 'Failed to delete project');
-        } finally {
-            // Close the modal and reset state
-            setDeleteModalOpen(false);
-            setProjectToDelete(null);
         }
     };
 
@@ -109,30 +69,9 @@ export default function Projects() {
         if (!selectedProject) return;
 
         try {
-            // Prepare the update data
-            const updateData = {
-                name: projectData.name,
-                description: projectData.description,
-                githubUrl: projectData.githubUrl,
-                projectUrl: projectData.projectUrl,
-                technologies: projectData.technologies,
-                imagePath: projectData.imagePath,
-            };
-            console.log(updateData);
-            // Call the API to update the project
-            const updatedProject = await projectApi.updateProject(selectedProject.id, updateData);
-
-            // Update the projects list with the updated project
-            setProjects(prevProjects =>
-                prevProjects.map(project =>
-                    project.id === selectedProject.id ? updatedProject : project
-                )
-            );
-
-            console.log("Project updated successfully:", updatedProject);
+            await updateProject(selectedProject.id, projectData);
+            handleCloseEditModal();
         } catch (error) {
-            console.error("Error updating project:", error);
-            // TODO: Show error message to user
             alert(error instanceof Error ? error.message : 'Failed to update project');
         }
     };
@@ -294,7 +233,7 @@ export default function Projects() {
                     isOpen={deleteModalOpen}
                     onClose={handleCloseDeleteModal}
                     onConfirm={handleConfirmDelete}
-                    projectName={projectToDelete?.name || ''}
+                    projectName={projects.find(p => p.id === projectToDelete)?.name || ''}
                 />
             </div>
         </div>
