@@ -1,8 +1,6 @@
 "use client";
 
-import Header from "@/component/customer/Header";
 import Login from "@/app/login/_components/Login";
-import Footer from "@/component/customer/Footer";
 import { useAuthStore } from "@/store";
 import { useEffect, useRef } from "react";
 

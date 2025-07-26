@@ -4,7 +4,6 @@ import { FaBars, FaTimes } from "react-icons/fa";
 interface HeaderProps {
     title?: string;
     userName?: string;
-    userRole?: string;
     userInitials?: string;
     sidebarOpen?: boolean;
     onToggleSidebar?: () => void;
