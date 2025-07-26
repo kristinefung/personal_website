@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store";
 import AdminSidebar from "@/component/admin/Sidebar";
 import Header from "@/component/admin/Header";
+import Snackbar from "@/component/ui/Snackbar";
 
 interface AdminLayoutProps {
     children: React.ReactNode;
@@ -56,24 +57,27 @@ export default function AdminLayout({
     }
 
     return (
-        <main className="bg-[#f0f4f8] min-h-screen">
-            <AdminSidebar
-                sidebarOpen={sidebarOpen}
-                onToggleSidebar={toggleSidebar}
-                onLogout={handleLogout}
-            />
-            <div className="flex-1 lg:ml-64">
-                <Header
-                    title={title}
-                    userName={user.name}
-                    userInitials={user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : ''}
+        <>
+            <Snackbar />
+            <main className="bg-[#f0f4f8] min-h-screen">
+                <AdminSidebar
                     sidebarOpen={sidebarOpen}
                     onToggleSidebar={toggleSidebar}
+                    onLogout={handleLogout}
                 />
-                <div className="pt-20">
-                    {children}
+                <div className="flex-1 lg:ml-64">
+                    <Header
+                        title={title}
+                        userName={user.name}
+                        userInitials={user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : ''}
+                        sidebarOpen={sidebarOpen}
+                        onToggleSidebar={toggleSidebar}
+                    />
+                    <div className="pt-20">
+                        {children}
+                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </>
     );
 } 

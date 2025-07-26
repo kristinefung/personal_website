@@ -1,12 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useProfileStore } from "@/store";
+import { useProfileStore, useSnackbarStore } from "@/store";
 import { UpdateProfileRequest } from "@/types/api";
 import TextField from "@/component/form/TextField";
 import TextArea from "@/component/form/TextArea";
 
 export default function Profile() {
     const { profile, isLoading, error, fetchProfile, updateProfile } = useProfileStore();
+    const { showSuccessSnackbar, showErrorSnackbar } = useSnackbarStore();
     const [formData, setFormData] = useState({
         email: "",
         bio: "",
@@ -43,7 +44,7 @@ export default function Profile() {
         e.preventDefault();
 
         if (!profile?.id) {
-            alert("Profile not found");
+            showErrorSnackbar("Profile not found");
             return;
         }
 
@@ -79,9 +80,9 @@ export default function Profile() {
             await updateProfile(profile.id, updateData);
             setSelectedImageFile(null);
             setPreviewImageUrl(null);
-            alert("Profile saved successfully!");
+            showSuccessSnackbar("Profile saved successfully!");
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Failed to save profile');
+            showErrorSnackbar(err instanceof Error ? err.message : 'Failed to save profile');
         }
     };
 

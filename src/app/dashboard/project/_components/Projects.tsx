@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { useProjectStore } from "@/store";
+import { useProjectStore, useSnackbarStore } from "@/store";
 import ProjectFormModal from "@/app/dashboard/project/_components/ProjectFormModal";
 import DeleteProjectModal from "@/app/dashboard/project/_components/DeleteProjectModal";
 import Table from "@/component/admin/Table";
@@ -18,6 +18,7 @@ export default function Projects() {
         deleteProject,
         setSelectedProject
     } = useProjectStore();
+    const { showSuccessSnackbar, showErrorSnackbar } = useSnackbarStore();
 
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [addModalOpen, setAddModalOpen] = useState(false);
@@ -36,8 +37,9 @@ export default function Projects() {
         try {
             await createProject(projectData);
             handleCloseAddModal();
+            showSuccessSnackbar("Project created successfully!");
         } catch (error) {
-            alert(error instanceof Error ? error.message : 'Failed to create project');
+            showErrorSnackbar(error instanceof Error ? error.message : 'Failed to create project');
         }
     };
 
@@ -60,8 +62,9 @@ export default function Projects() {
         try {
             await deleteProject(projectToDelete);
             handleCloseDeleteModal();
+            showSuccessSnackbar("Project deleted successfully!");
         } catch (error) {
-            alert(error instanceof Error ? error.message : 'Failed to delete project');
+            showErrorSnackbar(error instanceof Error ? error.message : 'Failed to delete project');
         }
     };
 
@@ -71,8 +74,9 @@ export default function Projects() {
         try {
             await updateProject(selectedProject.id, projectData);
             handleCloseEditModal();
+            showSuccessSnackbar("Project updated successfully!");
         } catch (error) {
-            alert(error instanceof Error ? error.message : 'Failed to update project');
+            showErrorSnackbar(error instanceof Error ? error.message : 'Failed to update project');
         }
     };
 

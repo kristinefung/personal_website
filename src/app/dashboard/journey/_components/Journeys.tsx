@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { useJourneyStore } from "@/store";
+import { useJourneyStore, useSnackbarStore } from "@/store";
 import Table from "@/component/admin/Table";
 import JourneyFormModal from "./JourneyFormModal";
 import DeleteJourneyModal from "./DeleteJourneyModal";
@@ -18,6 +18,7 @@ export default function Journeys() {
         deleteJourney,
         setSelectedJourney
     } = useJourneyStore();
+    const { showSuccessSnackbar, showErrorSnackbar } = useSnackbarStore();
 
     // Modal state
     const [addModalOpen, setAddModalOpen] = useState(false);
@@ -61,8 +62,9 @@ export default function Journeys() {
         try {
             await updateJourney(selectedJourney.id, journeyData);
             handleCloseEditModal();
+            showSuccessSnackbar("Journey updated successfully!");
         } catch (error) {
-            alert(error instanceof Error ? error.message : 'Failed to update journey');
+            showErrorSnackbar(error instanceof Error ? error.message : 'Failed to update journey');
         }
     };
 
@@ -70,8 +72,9 @@ export default function Journeys() {
         try {
             await createJourney(journeyData);
             handleCloseAddModal();
+            showSuccessSnackbar("Journey created successfully!");
         } catch (error) {
-            alert(error instanceof Error ? error.message : 'Failed to create journey');
+            showErrorSnackbar(error instanceof Error ? error.message : 'Failed to create journey');
         }
     };
 
@@ -80,8 +83,9 @@ export default function Journeys() {
         try {
             await deleteJourney(journeyToDelete);
             handleCloseDeleteModal();
+            showSuccessSnackbar("Journey deleted successfully!");
         } catch (error) {
-            alert(error instanceof Error ? error.message : 'Failed to delete journey');
+            showErrorSnackbar(error instanceof Error ? error.message : 'Failed to delete journey');
         }
     };
 
