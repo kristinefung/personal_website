@@ -1,14 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { profileApi } from "@/service/profileService";
-import { ProfileResponse } from "@/types/api";
+import { useProfileStore } from "@/store";
+import { UpdateProfileRequest } from "@/types/api";
 import TextField from "@/component/form/TextField";
 import TextArea from "@/component/form/TextArea";
 
 export default function Profile() {
-    const [profile, setProfile] = useState<ProfileResponse | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { profile, isLoading, error, fetchProfile, updateProfile } = useProfileStore();
     const [formData, setFormData] = useState({
         email: "",
         bio: "",
@@ -22,27 +20,19 @@ export default function Profile() {
 
     useEffect(() => {
         fetchProfile();
-    }, []);
+    }, [fetchProfile]);
 
-    const fetchProfile = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const data = await profileApi.getMainProfile();
-            setProfile(data);
+    useEffect(() => {
+        if (profile) {
             setFormData({
-                email: data.email || "",
-                bio: data.bio || "",
-                profileImagePath: data.profileImagePath || "",
-                githubUrl: data.githubUrl || "",
-                linkedinUrl: data.linkedinUrl || "",
+                email: profile.email || "",
+                bio: profile.bio || "",
+                profileImagePath: profile.profileImagePath || "",
+                githubUrl: profile.githubUrl || "",
+                linkedinUrl: profile.linkedinUrl || "",
             });
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load profile');
-        } finally {
-            setLoading(false);
         }
-    };
+    }, [profile]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -52,8 +42,12 @@ export default function Profile() {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!profile?.id) {
+            alert("Profile not found");
+            return;
+        }
+
         try {
-            setLoading(true);
             let updatedFormData = { ...formData };
 
             // Upload image if a new one was selected
@@ -72,29 +66,22 @@ export default function Profile() {
                 }
 
                 updatedFormData.profileImagePath = uploadData.path;
-                console.log(updatedFormData.profileImagePath);
             }
 
-            // TODO: Implement update profile API call
-            if (profile?.id) {
-                await profileApi.updateProfile(profile.id, {
-                    email: updatedFormData.email,
-                    bio: updatedFormData.bio,
-                    profileImagePath: updatedFormData.profileImagePath,
-                    githubUrl: updatedFormData.githubUrl,
-                    linkedinUrl: updatedFormData.linkedinUrl,
-                });
-            }
-            // For now, just update local state
-            setFormData(updatedFormData);
+            const updateData: UpdateProfileRequest = {
+                email: updatedFormData.email,
+                bio: updatedFormData.bio,
+                profileImagePath: updatedFormData.profileImagePath,
+                githubUrl: updatedFormData.githubUrl,
+                linkedinUrl: updatedFormData.linkedinUrl,
+            };
+
+            await updateProfile(profile.id, updateData);
             setSelectedImageFile(null);
             setPreviewImageUrl(null);
-
             alert("Profile saved successfully!");
         } catch (err) {
             alert(err instanceof Error ? err.message : 'Failed to save profile');
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -102,28 +89,28 @@ export default function Profile() {
         fileInputRef.current?.click();
     };
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file) return;
-        setSelectedImageFile(file);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPreviewImageUrl(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+        if (file) {
+            setSelectedImageFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImageUrl(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleRemovePhoto = () => {
         setSelectedImageFile(null);
         setPreviewImageUrl(null);
         setFormData(prev => ({ ...prev, profileImagePath: "" }));
-        // Reset file input
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
     };
 
-    if (loading) {
+    if (isLoading) {
         return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div></div>;
     }
     if (error) {
@@ -136,11 +123,9 @@ export default function Profile() {
     // Helper function to get the correct image URL
     const getImageUrl = (imagePath: string) => {
         if (!imagePath) return "";
-        // If path already starts with /api/images, use it as is
         if (imagePath.startsWith('/api/images')) {
             return imagePath;
         }
-        // Otherwise, prepend /api/images
         return `/api/images/${imagePath}`;
     };
 
@@ -228,9 +213,13 @@ export default function Profile() {
                         <div className="flex justify-end">
                             <button
                                 type="submit"
-                                className="px-6 py-2 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                                disabled={isLoading}
+                                className={`px-6 py-2 text-white rounded-lg font-semibold transition-colors ${isLoading
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-gray-900 hover:bg-gray-800'
+                                    }`}
                             >
-                                Save Changes
+                                {isLoading ? 'Saving...' : 'Save Changes'}
                             </button>
                         </div>
                     </div>
