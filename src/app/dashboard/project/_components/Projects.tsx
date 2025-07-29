@@ -71,12 +71,12 @@ export default function Projects() {
     const handleSaveProject = async (projectData: any) => {
         if (!selectedProject) return;
 
-        try {
-            await updateProject(selectedProject.id, projectData);
+        const isUpdated = await updateProject(selectedProject.id, projectData);
+        if (isUpdated) {
             handleCloseEditModal();
             showSuccessSnackbar("Project updated successfully!");
-        } catch (error) {
-            showErrorSnackbar(error instanceof Error ? error.message : 'Failed to update project');
+        } else {
+            showErrorSnackbar("Failed to update project");
         }
     };
 

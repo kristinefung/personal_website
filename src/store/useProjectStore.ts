@@ -10,7 +10,7 @@ interface ProjectState {
     selectedProject: ProjectResponse | null;
     fetchProjects: () => Promise<void>;
     addProject: (projectData: any) => Promise<void>;
-    updateProject: (id: number, projectData: any) => Promise<void>;
+    updateProject: (id: number, projectData: any) => Promise<boolean>;
     deleteProject: (id: number) => Promise<void>;
     setSelectedProject: (project: ProjectResponse | null) => void;
 }
@@ -43,7 +43,7 @@ export const useProjectStore = create<ProjectState>()(
                     set({ error: err instanceof Error ? err.message : 'Failed to add project', isLoading: false });
                 }
             },
-            updateProject: async (id, projectData) => {
+            updateProject: async (id, projectData): Promise<boolean> => {
                 try {
                     set({ isLoading: true, error: null });
                     const updatedProject = await projectApi.updateProject(id, projectData);
@@ -53,8 +53,12 @@ export const useProjectStore = create<ProjectState>()(
                         ),
                         isLoading: false
                     }));
+                    return true;
                 } catch (err) {
+                    console.log("updateProject");
+                    console.log(err);
                     set({ error: err instanceof Error ? err.message : 'Failed to update project', isLoading: false });
+                    return false;
                 }
             },
             deleteProject: async (id) => {
