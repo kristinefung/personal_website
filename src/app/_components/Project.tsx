@@ -112,7 +112,7 @@ export default function Project() {
                             className="bg-[#0b192f] rounded-xl shadow-lg overflow-hidden flex flex-col justify-between min-h-[350px]"
                         >
                             <div className="flex-1 flex flex-col justify-center items-center p-0">
-                                <div className="w-full h-full mb-6 relative overflow-hidden rounded-lg">
+                                <div className="w-full h-[200px] mb-6 relative overflow-hidden rounded-lg">
                                     <Image
                                         src={imageUrl}
                                         alt={project.name}
